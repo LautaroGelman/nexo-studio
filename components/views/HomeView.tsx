@@ -201,12 +201,12 @@ export const HomeView = ({
                     </div>
                   </div>
 
-                  <div className="p-4 sm:p-5">
+                  <div className="p-4 sm:p-5 bg-black/60 backdrop-blur-md relative z-10">
                     <div className="grid grid-cols-3 gap-2 sm:gap-3">
                       {card.bullets.map((b, idx) => (
                         <div
                           key={idx}
-                          className="rounded-xl bg-gray-50 border border-gray-100 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-gray-700 text-center"
+                          className="rounded-xl bg-white/15 border border-white/10 px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-white text-center shadow-sm"
                         >
                           {b}
                         </div>
@@ -214,10 +214,10 @@ export const HomeView = ({
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-white/60">
                         Abrir estilo
                       </div>
-                      <div className="inline-flex items-center gap-2 text-sm font-semibold text-gray-900">
+                      <div className="inline-flex items-center gap-2 text-sm font-semibold text-white">
                         Ver demo <ArrowRight size={16} className="opacity-70" />
                       </div>
                     </div>

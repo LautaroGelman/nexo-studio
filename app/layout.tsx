@@ -38,7 +38,7 @@ export default function RootLayout({
       >
         {children}
         <FloatingWhatsAppButton
-          phoneNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ""}
+          phoneNumber="5492616527611"
           message={process.env.NEXT_PUBLIC_WHATSAPP_MESSAGE ?? "Hola! Te escribo desde el sitio web."}
         />
       </body>
