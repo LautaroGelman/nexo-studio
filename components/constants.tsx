@@ -46,8 +46,7 @@ export const STYLE_CARDS: StyleCard[] = [
     subtitle: "E-commerce moderno: filtro, búsqueda, grid premium.",
     bullets: ["Sticky filters", "Cards hover + quick add", "Newsletter + features"],
     accent: "from-orange-500/20 via-neutral-900/5 to-amber-500/15",
-    image:
-      "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&q=80",
+    image: "/interior-design.jpg",
     icon: <ShoppingBag size={18} />,
   },
   {

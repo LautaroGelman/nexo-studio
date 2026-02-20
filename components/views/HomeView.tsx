@@ -400,34 +400,9 @@ export const HomeView = ({
               <h3 className="mt-4 text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight">
                 Hagamos tu próxima landing.
               </h3>
-              <p className="mt-3 text-white/80 text-base sm:text-lg leading-relaxed">
-                Diseño de máxima calidad, con narrativa, jerarquías, y CTA. Entrega funcional hasta 7 días, con 2 iteraciones incluidas.
-              </p>
             </div>
 
-            <div className="rounded-2xl sm:rounded-3xl border border-white/15 bg-white/10 backdrop-blur p-4 sm:p-6">
-              <div className="text-sm font-semibold text-white/80">Dejá tus datos</div>
-              <div className="mt-3 grid grid-cols-1 gap-3">
-                <input
-                  placeholder="Nombre"
-                  className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder:text-white/50 outline-none focus:border-white/40"
-                />
-                <input
-                  placeholder="WhatsApp"
-                  className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-white placeholder:text-white/50 outline-none focus:border-white/40"
-                />
-                <button
-                  type="button"
-                  className="w-full rounded-xl bg-white text-black font-bold py-3 hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
-                >
-                  Pedir mi sitio <ArrowRight size={18} />
-                </button>
-
-                <div className="text-xs text-white/60">
-                  Respuesta rápida. Respetamos tu privacidad.
-                </div>
-              </div>
-            </div>
+            {/* Formulario eliminado por solicitud: se quita la caja derecha */}
           </div>
         </motion.div>
       </section>
