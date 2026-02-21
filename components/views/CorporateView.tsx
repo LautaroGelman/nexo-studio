@@ -120,12 +120,20 @@ export const CorporateView = () => {
 
   // ── Process parallax & light ───────────────────────────────────────────────
   const processRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: processP } = useScroll({ target: processRef, offset: ["start center", "end center"] });
+  // Ampliamos el offset para que la luz empiece antes y termine después de la sección
+  const { scrollYProgress: processP } = useScroll({ target: processRef, offset: ["start end", "end start"] });
   const smoothProcessP = useSpring(processP, { damping: 20, stiffness: 100 });
-  const lightY = useTransform(smoothProcessP, [0, 1], ["0%", "100%"]);
-  // Ajustamos el movimiento en X para que pase exactamente por el centro de las tarjetas
-  // Las tarjetas están en md:w-[46%], así que el centro de la izquierda es ~23% y el de la derecha es ~77%
-  const lightX = useTransform(smoothProcessP, [0, 0.5, 1], ["23%", "77%", "23%"]);
+  
+  // La luz viaja desde arriba (fuera de la pantalla) hasta abajo (fuera de la pantalla)
+  const lightY = useTransform(smoothProcessP, [0, 1], ["-20%", "120%"]);
+  
+  // La luz entra desde la derecha, serpentea por las tarjetas, y sale por la izquierda
+  // 0: entra por derecha (120%)
+  // 0.3: centro tarjeta izquierda (23%)
+  // 0.5: centro tarjeta derecha (77%)
+  // 0.7: centro tarjeta izquierda (23%)
+  // 1: sale por izquierda (-20%)
+  const lightX = useTransform(smoothProcessP, [0, 0.3, 0.5, 0.7, 1], ["120%", "23%", "77%", "23%", "-20%"]);
 
   // ─── Data ──────────────────────────────────────────────────────────────────
   const brands = [
@@ -553,7 +561,8 @@ export const CorporateView = () => {
       {/* ══════════════════════════════════
           PROCESS
       ══════════════════════════════════ */}
-      <section ref={processRef} className="py-16 sm:py-28 bg-[#0a0b10] relative overflow-hidden">
+      {/* Quitamos overflow-hidden para que la luz pueda "salir" de la sección sin cortarse abruptamente */}
+      <section ref={processRef} className="py-16 sm:py-28 bg-[#0a0b10] relative">
         {/* Moving Light */}
         <motion.div
           className="absolute w-[600px] h-[600px] rounded-full blur-[60px] pointer-events-none z-0"
@@ -588,16 +597,16 @@ export const CorporateView = () => {
             <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-px bg-white/10 -translate-x-1/2" />
             <div className="space-y-10 sm:space-y-0">
               {process.map((step, i) => {
-                // Calculamos la proximidad de la luz a esta tarjeta específica
-                // i=0 -> luz en 0 (arriba), i=1 -> luz en 0.5 (medio), i=2 -> luz en 1 (abajo)
-                const targetY = i / (process.length - 1);
+                // Ajustamos el cálculo de proximidad porque ahora el scrollYProgress va de "start end" a "end start"
+                // La sección central donde están las tarjetas ocurre aproximadamente entre 0.3 y 0.7 del progreso total
+                const targetY = 0.3 + (i * 0.2); // i=0 -> 0.3, i=1 -> 0.5, i=2 -> 0.7
                 const distance = useTransform(smoothProcessP, (v) => Math.abs(v - targetY));
                 
                 // Transformamos la distancia en opacidad y brillo para la tarjeta
-                const cardOpacity = useTransform(distance, [0, 0.3], [1, 0.5]);
-                const cardScale = useTransform(distance, [0, 0.3], [1.02, 1]);
-                const cardBorder = useTransform(distance, [0, 0.3], ["rgba(59,130,246,0.6)", "rgba(255,255,255,0.1)"]);
-                const cardBg = useTransform(distance, [0, 0.3], ["rgba(15,18,25,0.9)", "rgba(13,15,24,0.6)"]);
+                const cardOpacity = useTransform(distance, [0, 0.15], [1, 0.5]);
+                const cardScale = useTransform(distance, [0, 0.15], [1.02, 1]);
+                const cardBorder = useTransform(distance, [0, 0.15], ["rgba(59,130,246,0.6)", "rgba(255,255,255,0.1)"]);
+                const cardBg = useTransform(distance, [0, 0.15], ["rgba(15,18,25,0.9)", "rgba(13,15,24,0.6)"]);
 
                 return (
                   <motion.div
