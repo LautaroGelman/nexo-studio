@@ -206,8 +206,14 @@ export const CorporateView = () => {
             transition={{ duration: 0.8 }}
             className="text-center lg:text-left flex flex-col items-center lg:items-start relative"
           >
-            {/* Mobile glass backdrop — keeps text legible over the bg image */}
-            <div className="lg:hidden absolute -inset-x-4 -inset-y-6 rounded-3xl bg-slate-950/40 backdrop-blur-md -z-10 pointer-events-none" />
+            {/* Blur panel — mobile only, sits behind all text */}
+            <div
+              aria-hidden
+              className="lg:hidden absolute -inset-x-3 -inset-y-5 rounded-2xl -z-10 pointer-events-none overflow-hidden"
+            >
+              <div className="absolute inset-0 backdrop-blur-[6px]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/45 to-slate-950/60" />
+            </div>
 
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-[10px] sm:text-xs font-semibold tracking-widest uppercase mb-4 sm:mb-6">
               <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
@@ -374,7 +380,7 @@ export const CorporateView = () => {
       {/* ── SERVICES — Scroll-Driven Sticky ── */}
 
       {/* ── SERVICES — Mobile Scroll-Driven Sticky (md:hidden) ── */}
-      <div ref={mobileServicesRef} className="md:hidden relative h-[380vh]">
+      <div ref={mobileServicesRef} className="md:hidden relative h-[240vh]">
         <div
           className="sticky top-0 h-screen overflow-hidden flex flex-col"
           style={{ backgroundColor: "#04060f" }}
@@ -473,7 +479,7 @@ export const CorporateView = () => {
       </div>
 
       {/* ── SERVICES — Desktop Scroll-Driven (hidden on mobile) ── */}
-      <section ref={servicesRef} className="hidden md:block relative h-[500vh]">
+      <section ref={servicesRef} className="hidden md:block relative h-[320vh]">
         <div
           className="sticky top-0 h-screen overflow-hidden"
           style={{ backgroundColor: "#04060f" }}
