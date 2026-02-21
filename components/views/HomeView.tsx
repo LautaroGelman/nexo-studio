@@ -41,8 +41,8 @@ const StackedCard = ({
   return (
     <motion.button
       onClick={() => onNavigate(card.id)}
-      style={{ x, y, scale, rotate, opacity, zIndex: i }}
-      className="absolute origin-top w-full max-w-[320px] sm:max-w-md text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] transition-shadow will-change-transform"
+      style={{ x, y, scale, rotate, opacity, zIndex: i, willChange: "transform, opacity" }}
+      className="absolute origin-top w-full max-w-[320px] sm:max-w-md text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] transition-shadow"
     >
       <div className="relative h-48 sm:h-64">
         <div className={`absolute inset-0 bg-gradient-to-br ${card.accent}`} />
@@ -249,8 +249,7 @@ export const HomeView = ({
                     Algunos ejemplos de lo que podemos hacer.
                   </h2>
                   <p className="mt-6 text-gray-600 text-lg sm:text-xl leading-relaxed max-w-lg">
-                    Sigue haciendo scroll para descubrir nuestros estilos. 
-                    Cada diseño está estructurado como un ecosistema premium pensado para convertir tus visitas en clientes.
+                    Estos son solo ejemplos, no usamos plantillas. A cada cliente le diseñamos una solución a medida, estructurada como un ecosistema premium pensado para convertir tus visitas en clientes.
                   </p>
                 </div>
 
