@@ -19,10 +19,10 @@ export default function Page() {
   }, [currentView]);
 
   return (
-    <main className="min-h-screen bg-white relative font-sans text-gray-900 overflow-x-hidden">
+    <main className="min-h-screen bg-white relative font-sans text-gray-900">
       <Navbar activeView={currentView} setView={setCurrentView} />
 
-      <AnimatePresence mode="wait">
+      
         {currentView === "Home" && (
           <HomeView key="home" onNavigate={setCurrentView} />
         )}
@@ -46,7 +46,7 @@ export default function Page() {
         {currentView === "Industrial" && (
           <IndustrialView key="industrial" />
         )}
-      </AnimatePresence>
+      
     </main>
   );
 }

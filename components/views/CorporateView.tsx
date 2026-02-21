@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useInView, animate, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   ChevronDown,
@@ -13,8 +13,117 @@ import {
   Home,
 } from "lucide-react";
 
+// Helper component to animate the stats
+function AnimatedStat({ valueString }: { valueString: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "0px" });
+
+  useEffect(() => {
+    if (isInView && ref.current) {
+      const numericValue = parseInt(valueString.replace(/[^0-9]/g, ""), 10);
+      const prefix = valueString.match(/^[^0-9]*/)?.[0] || "";
+      const suffix = valueString.match(/[^0-9]*$/)?.[0] || "";
+
+      const controls = animate(0, numericValue, {
+        duration: 1.1,
+        ease: [0.16, 1, 0.3, 1], // swift exponential-out: fast rush then sharp stop
+        onUpdate(value) {
+          ref.current!.textContent = prefix + Math.round(value) + suffix;
+        },
+      });
+      return () => controls.stop();
+    }
+  }, [isInView, valueString]);
+
+  const initialDisplay = valueString.replace(/\d+/g, "0");
+
+  return <span ref={ref}>{initialDisplay}</span>;
+}
+
+
 export const CorporateView = () => {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
+
+  // ── Scroll-Driven Services ──────────────────────────────────────────────
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: servicesRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Hide navbar while pinned inside the services section
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (v) => {
+      if (v > 0.01 && v < 0.99) {
+        document.documentElement.classList.add("services-active");
+      } else {
+        document.documentElement.classList.remove("services-active");
+      }
+    });
+    return () => {
+      unsubscribe();
+      document.documentElement.classList.remove("services-active");
+    };
+  }, [scrollYProgress]);
+
+  // Header
+  const hO  = useTransform(scrollYProgress, [0.00, 0.07], [0, 1]);
+  const hY  = useTransform(scrollYProgress, [0.00, 0.07], [36, 0]);
+
+  // Card 1 — slides in from right, settles at ~28 %
+  const c1x = useTransform(scrollYProgress, [0.06, 0.28], [1100, 0]);
+  const c1o = useTransform(scrollYProgress, [0.06, 0.18], [0, 1]);
+  // Glow appears once card has settled
+  const g1  = useTransform(scrollYProgress, [0.24, 0.34], [0, 1]);
+
+  // Card 2 — settles at ~52 %
+  const c2x = useTransform(scrollYProgress, [0.30, 0.52], [1100, 0]);
+  const c2o = useTransform(scrollYProgress, [0.30, 0.42], [0, 1]);
+  const g2  = useTransform(scrollYProgress, [0.48, 0.58], [0, 1]);
+
+  // Card 3 — settles at ~76 %
+  const c3x = useTransform(scrollYProgress, [0.54, 0.76], [1100, 0]);
+  const c3o = useTransform(scrollYProgress, [0.54, 0.66], [0, 1]);
+  const g3  = useTransform(scrollYProgress, [0.72, 0.82], [0, 1]);
+
+  const services = [
+    {
+      num: "01",
+      imageUrl: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&q=80&w=1400",
+      title: "Derecho Corporativo",
+      desc: "Fusiones, adquisiciones y litigios comerciales complejos manejados con precisión quirúrgica y visión estratégica de largo plazo.",
+      features: ["Contratos Internacionales", "Propiedad Intelectual", "Litigio Mercantil"],
+      accent: "#3b82f6",
+      glow: "59,130,246",
+      icon: <Scale size={16} />,
+    },
+    {
+      num: "02",
+      imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80",
+      title: "Consultoría Financiera",
+      desc: "Auditoría forense y planificación fiscal estratégica para optimizar cada recurso y maximizar la rentabilidad corporativa.",
+      features: ["Auditoría Externa", "Planning Fiscal", "Valuación de Activos"],
+      accent: "#10b981",
+      glow: "16,185,129",
+      icon: <Briefcase size={16} />,
+    },
+    {
+      num: "03",
+      imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80",
+      title: "Gestión de Talento",
+      desc: "Transformamos el capital humano en la mayor ventaja competitiva de su organización mediante cultura y liderazgo de alto impacto.",
+      features: ["Headhunting Ejecutivo", "Desarrollo Organizacional", "Compensaciones"],
+      accent: "#a78bfa",
+      glow: "167,139,250",
+      icon: <Users size={16} />,
+    },
+  ];
+
+  const cardMotion = [
+    { x: c1x, opacity: c1o, glow: g1 },
+    { x: c2x, opacity: c2o, glow: g2 },
+    { x: c3x, opacity: c3o, glow: g3 },
+  ];
 
   const stats = [
     { value: "25+", label: "Años de Experiencia" },
@@ -105,7 +214,9 @@ export const CorporateView = () => {
                        <div className="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-400"><Gem size={16}/></div>
                        <span className="text-xs text-slate-300 uppercase tracking-wider font-semibold">Crecimiento</span>
                     </div>
-                    <div className="text-white text-2xl font-bold mb-1">+240%</div>
+                    <div className="text-white text-2xl font-bold mb-1">
+                      <AnimatedStat valueString="+240%" />
+                    </div>
                     <div className="text-slate-400 text-xs">Incremento en Q3 2024</div>
                   </div>
                   <div className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-xl hover:bg-white/10 transition-colors cursor-default">
@@ -113,7 +224,9 @@ export const CorporateView = () => {
                        <div className="p-1.5 bg-blue-500/20 rounded-lg text-blue-400"><Briefcase size={16}/></div>
                        <span className="text-xs text-slate-300 uppercase tracking-wider font-semibold">Capital</span>
                     </div>
-                    <div className="text-white text-2xl font-bold mb-1">$500M+</div>
+                    <div className="text-white text-2xl font-bold mb-1">
+                      <AnimatedStat valueString="$500M+" />
+                    </div>
                     <div className="text-slate-400 text-xs">Activos bajo gestión</div>
                   </div>
                </div>
@@ -133,7 +246,7 @@ export const CorporateView = () => {
             {stats.map((stat, idx) => (
               <div key={idx} className="text-center">
                 <div className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-1 sm:mb-2">
-                  {stat.value}
+                  <AnimatedStat valueString={stat.value} />
                 </div>
                 <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider">
                   {stat.label}
@@ -180,15 +293,19 @@ export const CorporateView = () => {
                   "Implementación de estructuras fiscales eficientes.",
                   "Defensa corporativa implacable.",
                 ].map((item, i) => (
-                  <li
+                  <motion.li
                     key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.2 }}
                     className="flex items-center gap-3 text-slate-800 font-medium"
                   >
                     <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
                       <ArrowRight size={14} />
                     </div>
                     {item}
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </div>
@@ -196,73 +313,204 @@ export const CorporateView = () => {
         </div>
       </section>
 
-      {/* SERVICES */}
-      <section className="py-14 sm:py-24 bg-slate-100">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-20">
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-slate-900 mb-4 sm:mb-6">
-              Nuestra Expertise
-            </h2>
-            <p className="text-slate-600 text-base sm:text-lg">
-              Cubrimos cada ángulo de su corporación con especialistas de primer
-              nivel dedicados a su éxito.
-            </p>
+      {/* ── SERVICES — Scroll-Driven Sticky ── */}
+
+      {/* Mobile-only static header (sticky section not scroll-animatable on mobile) */}
+      <div className="md:hidden bg-[#04060f] px-6 pt-14 pb-8 text-center">
+        <p className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-4">
+          <span className="block w-5 h-px bg-slate-700" />
+          Servicios Corporativos
+          <span className="block w-5 h-px bg-slate-700" />
+        </p>
+        <h2 className="text-3xl font-bold text-white tracking-tight leading-tight">
+          Nuestra{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-white to-slate-400">
+            Expertise
+          </span>
+        </h2>
+        <p className="mt-3 text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">
+          Cubrimos cada ángulo de su corporación con especialistas de primer nivel.
+        </p>
+      </div>
+
+      <section ref={servicesRef} className="relative h-[500vh]">
+        <div
+          className="sticky top-0 h-screen overflow-hidden"
+          style={{ backgroundColor: "#04060f" }}
+        >
+          {/* ── WALL ── */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Perspective grid — fine lines */}
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)",
+                backgroundSize: "68px 68px",
+                transform: "perspective(900px) rotateX(6deg) scaleY(1.1)",
+                transformOrigin: "50% 0%",
+              }}
+            />
+            {/* Bold grid — structural depth */}
+            <div
+              className="absolute inset-0 opacity-[0.55]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+                backgroundSize: "204px 204px",
+                transform: "perspective(900px) rotateX(6deg) scaleY(1.1)",
+                transformOrigin: "50% 0%",
+              }}
+            />
+            {/* Central radial fade — keeps center readable */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_60%,transparent_30%,#04060f_100%)]" />
+            {/* Edge vignettes */}
+            <div className="absolute inset-y-0 left-0  w-20 bg-gradient-to-r from-[#04060f] to-transparent" />
+            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#04060f] to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#04060f] to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#04060f] to-transparent" />
+
+            {/* Per-card wall glow — 3 columns */}
+            {services.map((s, i) => (
+              <motion.div
+                key={i}
+                style={{
+                  opacity: cardMotion[i].glow,
+                  left: `${10 + i * 30}%`,
+                  width: "30%",
+                  background: `radial-gradient(ellipse at 50% 55%, rgba(${s.glow},0.28) 0%, transparent 70%)`,
+                }}
+                className="absolute top-0 bottom-0 blur-[140px]"
+              />
+            ))}
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5 sm:gap-8">
-            {[
-              {
-                icon: <Scale size={28} />,
-                title: "Derecho Corporativo",
-                desc: "Fusiones, adquisiciones, y litigios comerciales complejos manejados con precisión quirúrgica.",
-                features: [
-                  "Contratos Internacionales",
-                  "Propiedad Intelectual",
-                  "Litigio Mercantil",
-                ],
-              },
-              {
-                icon: <Briefcase size={28} />,
-                title: "Consultoría Financiera",
-                desc: "Auditoría forense y planificación fiscal estratégica para optimizar cada recurso de su empresa.",
-                features: ["Auditoría Externa", "Planning Fiscal", "Valuación de Activos"],
-              },
-              {
-                icon: <Users size={28} />,
-                title: "Gestión de Talento",
-                desc: "Transformamos su capital humano en su mayor ventaja competitiva mediante liderazgo y cultura.",
-                features: [
-                  "Headhunting Ejecutivo",
-                  "Desarrollo Organizacional",
-                  "Compensaciones",
-                ],
-              },
-            ].map((service, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.15 }}
-                className="bg-white p-6 sm:p-8 rounded-2xl hover:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.1)] transition-all border border-slate-100 group"
-              >
-                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                  {service.icon}
-                </div>
-                <h4 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 sm:mb-4">
-                  {service.title}
-                </h4>
-                <p className="text-slate-600 mb-8">{service.desc}</p>
-                <div className="space-y-3 pt-6 border-t border-slate-100">
-                  {service.features.map((f, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-slate-500">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      {f}
+          {/* ── CONTENT ── */}
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-5 sm:px-8 md:px-12 lg:px-16 pb-16">
+
+            {/* Header */}
+            <motion.div
+              style={{ opacity: hO, y: hY }}
+              className="text-center mb-10 md:mb-14 shrink-0"
+            >
+              <p className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-5">
+                <span className="block w-6 h-px bg-slate-600" />
+                Servicios Corporativos
+                <span className="block w-6 h-px bg-slate-600" />
+              </p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-white tracking-tight leading-[1.08]">
+                Nuestra{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-white to-slate-400">
+                  Expertise
+                </span>
+              </h2>
+            </motion.div>
+
+            {/* Cards row */}
+            <div className="w-full max-w-[960px] flex flex-col md:flex-row gap-4 md:gap-7 lg:gap-8">
+              {services.map((svc, idx) => (
+                <motion.div
+                  key={idx}
+                  style={{ x: cardMotion[idx].x, opacity: cardMotion[idx].opacity }}
+                  className="relative flex-1 flex flex-col rounded-2xl overflow-hidden group h-[200px] sm:h-[240px] md:h-[560px] lg:h-[620px]"
+                >
+                  {/* ── IMAGE ── top 52% */}
+                  <div className="relative w-full overflow-hidden" style={{ flex: "0 0 52%" }}>
+                    <img
+                      src={svc.imageUrl}
+                      alt={svc.title}
+                      className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                    />
+                    {/* Fade image into content below */}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `linear-gradient(to bottom, transparent 45%, #0c1120 100%)`,
+                      }}
+                    />
+                    {/* Index number badge — top-left */}
+                    <div className="absolute top-4 left-4">
+                      <span
+                        className="text-[11px] font-bold tracking-[0.22em] px-2.5 py-1 rounded-full border"
+                        style={{
+                          color: svc.accent,
+                          borderColor: `${svc.accent}40`,
+                          backgroundColor: `${svc.accent}12`,
+                        }}
+                      >
+                        {svc.num}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+                    {/* Large dim number */}
+                    <div
+                      className="absolute bottom-3 right-4 text-[4rem] font-black leading-none select-none"
+                      style={{ color: `${svc.accent}18` }}
+                    >
+                      {svc.num}
+                    </div>
+                  </div>
+
+                  {/* ── CONTENT ── bottom 42% */}
+                  <div
+                    className="flex flex-col justify-between flex-1 px-6 pt-5 pb-7"
+                    style={{ backgroundColor: "#0c1120" }}
+                  >
+                    {/* Top */}
+                    <div>
+                      {/* Accent bar */}
+                      <div
+                        className="w-8 h-[3px] rounded-full mb-4"
+                        style={{ backgroundColor: svc.accent }}
+                      />
+                      <h3 className="text-lg md:text-xl font-bold text-white mb-3 leading-tight">
+                        {svc.title}
+                      </h3>
+                      <p className="text-slate-400 text-sm leading-relaxed">
+                        {svc.desc}
+                      </p>
+                    </div>
+
+                    {/* Features */}
+                    <ul className="mt-6 space-y-2.5 border-t pt-5" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                      {svc.features.map((f, fi) => (
+                        <li key={fi} className="flex items-center gap-3 text-[13px] text-slate-500">
+                          <span
+                            className="shrink-0 w-1.5 h-1.5 rounded-full"
+                            style={{ backgroundColor: svc.accent }}
+                          />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Glass border overlay */}
+                  <div
+                    className="absolute inset-0 rounded-2xl pointer-events-none transition-all duration-500"
+                    style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.07)` }}
+                  />
+                  {/* Hover glow border */}
+                  <div
+                    className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ boxShadow: `inset 0 0 0 1px ${svc.accent}55, 0 0 40px ${svc.accent}18` }}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Scroll cue — fixed to bottom of viewport, below all cards */}
+            <motion.div
+              style={{ opacity: hO }}
+              className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 pointer-events-none"
+            >
+              <motion.div
+                animate={{ scaleY: [1, 1.8, 1], opacity: [0.3, 0.7, 0.3] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                className="w-px h-8 origin-top"
+                style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.35), transparent)" }}
+              />
+              <span className="text-[8px] uppercase tracking-[0.28em] text-slate-700 font-medium">scroll</span>
+            </motion.div>
           </div>
         </div>
       </section>

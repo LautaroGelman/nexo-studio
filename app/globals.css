@@ -18,14 +18,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  overflow-x: hidden;
 }
 
 /* Improve touch targets and remove tap highlights */
@@ -108,4 +106,14 @@ h1, h2, h3, h4, h5, h6, p {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Hide navbar when inside the scroll-driven services section */
+nav {
+  transition: opacity 0.5s ease, transform 0.5s ease !important;
+}
+.services-active nav {
+  opacity: 0 !important;
+  transform: translateY(-110%) !important;
+  pointer-events: none !important;
 }
