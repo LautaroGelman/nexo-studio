@@ -50,8 +50,8 @@ button, [role="button"] {
     padding-bottom: env(safe-area-inset-bottom);
   }
   .safe-top {
-    /* Cap at 60px to prevent Instagram's in-app browser from inflating the inset */
-    padding-top: min(env(safe-area-inset-top), 60px);
+    /* Instagram in-app browser inflates safe-area-inset-top; cap tightly */
+    padding-top: min(env(safe-area-inset-top), 20px);
   }
 }
 
