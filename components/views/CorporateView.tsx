@@ -43,6 +43,16 @@ function AnimatedStat({ valueString }: { valueString: string }) {
 
 export const CorporateView = () => {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
+  const [philosophyTouched, setPhilosophyTouched] = useState(false);
+
+  // ── Hero Scroll (mobile background image) ────────────────────────────────
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const mobileHeroX       = useTransform(heroProgress, [0, 0.75], ["0%", "90%"]);
+  const mobileHeroOpacity = useTransform(heroProgress, [0, 0.55], [1, 0]);
 
   // ── Scroll-Driven Services (desktop) ─────────────────────────────────────
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -59,12 +69,12 @@ export const CorporateView = () => {
   });
 
   // Each card slides up + fades in sequentially, then stays visible
-  const mc0o = useTransform(mobileSvcProgress, [0.00, 0.18], [0, 1]);
-  const mc0y = useTransform(mobileSvcProgress, [0.00, 0.18], [48, 0]);
-  const mc1o = useTransform(mobileSvcProgress, [0.28, 0.48], [0, 1]);
-  const mc1y = useTransform(mobileSvcProgress, [0.28, 0.48], [48, 0]);
-  const mc2o = useTransform(mobileSvcProgress, [0.58, 0.78], [0, 1]);
-  const mc2y = useTransform(mobileSvcProgress, [0.58, 0.78], [48, 0]);
+  const mc0o = useTransform(mobileSvcProgress, [0.00, 0.13], [0, 1]);
+  const mc0y = useTransform(mobileSvcProgress, [0.00, 0.13], [48, 0]);
+  const mc1o = useTransform(mobileSvcProgress, [0.20, 0.36], [0, 1]);
+  const mc1y = useTransform(mobileSvcProgress, [0.20, 0.36], [48, 0]);
+  const mc2o = useTransform(mobileSvcProgress, [0.44, 0.60], [0, 1]);
+  const mc2y = useTransform(mobileSvcProgress, [0.44, 0.60], [48, 0]);
   const mobileCards = [
     { opacity: mc0o, y: mc0y },
     { opacity: mc1o, y: mc1y },
@@ -161,11 +171,32 @@ export const CorporateView = () => {
     >
 
       {/* IMPROVED HERO */}
-      <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden bg-slate-950 px-4 sm:px-6">
+      <section ref={heroRef} className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden bg-slate-950 px-4 sm:px-6">
         {/* Background Grid & Effects */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="absolute top-0 right-0 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] bg-blue-600/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-emerald-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3" />
+
+        {/* ── Mobile floating background image (hidden on lg+) ── */}
+        <motion.div
+          className="lg:hidden absolute z-[5] pointer-events-none"
+          style={{
+            top: "8%",
+            left: "-5%",
+            width: "80%",
+            height: "68%",
+            x: mobileHeroX,
+            opacity: mobileHeroOpacity,
+          }}
+        >
+          <div className="w-full h-full rounded-2xl overflow-hidden border border-slate-700/20 shadow-2xl">
+            <div
+              className="w-full h-full bg-cover bg-center"
+              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')" }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-950/35 via-transparent to-slate-950/55" />
+          </div>
+        </motion.div>
 
         <div className="container mx-auto relative z-20 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center pt-10 sm:pt-10">
           {/* Text Content */}
@@ -173,8 +204,11 @@ export const CorporateView = () => {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center lg:text-left flex flex-col items-center lg:items-start"
+            className="text-center lg:text-left flex flex-col items-center lg:items-start relative"
           >
+            {/* Mobile glass backdrop — keeps text legible over the bg image */}
+            <div className="lg:hidden absolute -inset-x-4 -inset-y-6 rounded-3xl bg-slate-950/40 backdrop-blur-md -z-10 pointer-events-none" />
+
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-[10px] sm:text-xs font-semibold tracking-widest uppercase mb-4 sm:mb-6">
               <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
               Corporate Intelligence
@@ -182,7 +216,7 @@ export const CorporateView = () => {
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-[1.1] tracking-tight">
               Redefiniendo el <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-emerald-400">
+              <span className="font-extralight tracking-[0.18em] text-white/80 lg:font-bold lg:tracking-tight lg:text-transparent lg:bg-clip-text lg:bg-gradient-to-r lg:from-blue-400 lg:via-blue-200 lg:to-emerald-400">
                 Futuro Empresarial
               </span>
             </h1>
@@ -205,8 +239,8 @@ export const CorporateView = () => {
 
             {/* Trust Indicators */}
             <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-800/60 w-full flex flex-col items-center lg:items-start gap-4">
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Confían en nosotros</p>
-              <div className="flex gap-4 sm:gap-6 opacity-40 grayscale mix-blend-screen items-center flex-wrap justify-center lg:justify-start">
+              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Confían en nosotros</p>
+              <div className="flex gap-4 sm:gap-6 opacity-70 grayscale items-center flex-wrap justify-center lg:justify-start">
                  <div className="flex items-center gap-2"><div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white"></div><span className="font-bold text-sm sm:text-lg">AEXA</span></div>
                  <div className="flex items-center gap-2"><div className="w-5 h-5 sm:w-6 sm:h-6 rotate-45 border-2 border-white"></div><span className="font-bold text-sm sm:text-lg">NOVUS</span></div>
                  <div className="flex items-center gap-2"><div className="w-5 h-5 sm:w-6 sm:h-6 rounded-sm border-2 border-white"></div><span className="font-bold text-sm sm:text-lg">VERTEX</span></div>
@@ -286,7 +320,12 @@ export const CorporateView = () => {
               <img
                 src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80"
                 alt="Meeting"
-                className="relative z-10 rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
+                className={`relative z-10 rounded-2xl shadow-2xl transition-all duration-700 cursor-pointer ${
+                  philosophyTouched ? 'grayscale-0' : 'grayscale'
+                } hover:grayscale-0`}
+                onTouchStart={() => setPhilosophyTouched(true)}
+                onTouchEnd={() => setTimeout(() => setPhilosophyTouched(false), 600)}
+                onTouchCancel={() => setPhilosophyTouched(false)}
               />
             </div>
             <div className="md:w-1/2">
@@ -371,59 +410,61 @@ export const CorporateView = () => {
             </h2>
           </div>
 
-          {/* Cards — build up vertically */}
-          <div className="relative z-10 flex flex-col gap-3 px-4 pb-4 overflow-hidden flex-1 justify-center">
+          {/* Cards — grid, 3 equal rows */}
+          <div
+            className="relative z-10 px-4 pt-2 pb-6 overflow-hidden flex-1"
+            style={{ display: "grid", gridTemplateRows: "1fr 1fr 1fr", gap: "20px" }}
+          >
             {services.map((svc, idx) => (
               <motion.div
                 key={idx}
-                style={{ opacity: mobileCards[idx].opacity, y: mobileCards[idx].y }}
-                className="flex flex-row rounded-2xl overflow-hidden"
+                style={{
+                  opacity: mobileCards[idx].opacity,
+                  y: mobileCards[idx].y,
+                  backgroundColor: "#0c1120",
+                  boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 30px rgba(${svc.glow},0.08)`,
+                }}
+                className="relative rounded-2xl overflow-hidden"
               >
+                {/* Image — bg-image fills right 44% top-to-bottom */}
                 <div
-                  className="flex flex-row w-full rounded-2xl overflow-hidden"
-                  style={{ backgroundColor: "#0c1120", boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 30px rgba(${svc.glow},0.08)` }}
+                  className="absolute top-0 right-0 bottom-0 w-[44%]"
+                  style={{
+                    backgroundImage: `url('${svc.imageUrl}')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
                 >
-                  {/* Image — left side */}
-                  <div className="relative shrink-0 w-28 overflow-hidden">
-                    <img
-                      src={svc.imageUrl}
-                      alt={svc.title}
-                      className="absolute inset-0 w-full h-full object-cover object-center"
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{ background: `linear-gradient(to right, transparent 60%, #0c1120 100%)` }}
-                    />
-                    {/* Num badge */}
-                    <div className="absolute top-2 left-2">
-                      <span
-                        className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-full border"
-                        style={{ color: svc.accent, borderColor: `${svc.accent}50`, backgroundColor: `${svc.accent}15` }}
-                      >
-                        {svc.num}
-                      </span>
-                    </div>
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: `linear-gradient(to left, transparent 30%, #0c1120 100%)` }}
+                  />
+                  <div className="absolute top-2 right-2">
+                    <span
+                      className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-full border"
+                      style={{ color: svc.accent, borderColor: `${svc.accent}50`, backgroundColor: `${svc.accent}15` }}
+                    >
+                      {svc.num}
+                    </span>
                   </div>
+                </div>
 
-                  {/* Content — right side */}
-                  <div className="flex flex-col justify-center flex-1 px-4 py-4">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <div className="w-5 h-[2px] rounded-full" style={{ backgroundColor: svc.accent }} />
-                      <h3 className="text-sm font-bold text-white leading-tight">{svc.title}</h3>
-                    </div>
-                    <p className="text-slate-400 text-xs leading-relaxed mb-3 line-clamp-2">{svc.desc}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {svc.features.map((f, fi) => (
-                        <span
-                          key={fi}
-                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                          style={{ color: svc.accent, backgroundColor: `${svc.accent}15`, border: `1px solid ${svc.accent}30` }}
-                        >
-                          {f}
-                        </span>
-                      ))}
-                    </div>
+                {/* Content — left side */}
+                <div className="relative z-10 flex flex-col justify-center w-[58%] h-full px-4 py-4">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-5 h-[2px] rounded-full" style={{ backgroundColor: svc.accent }} />
+                    <h3 className="text-sm font-bold text-white leading-tight">{svc.title}</h3>
                   </div>
+                  <p className="text-slate-400 text-xs leading-relaxed mb-2 line-clamp-2">{svc.desc}</p>
+                  <ul className="space-y-0.5 mb-2">
+                    {svc.features.map((f, fi) => (
+                      <li key={fi} className="text-[10px] text-slate-500 tracking-wide leading-relaxed">{f}</li>
+                    ))}
+                  </ul>
+                  <button className="self-start flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.12em] uppercase text-white/40 hover:text-white transition-colors duration-300 group/mbtn">
+                    <span>Conocer más</span>
+                    <ArrowRight size={9} className="group-hover/mbtn:translate-x-0.5 transition-transform" style={{ color: svc.accent }} />
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -518,7 +559,7 @@ export const CorporateView = () => {
                     <img
                       src={svc.imageUrl}
                       alt={svc.title}
-                      className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                      className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                     />
                     {/* Fade image into content below */}
                     <div
@@ -569,18 +610,20 @@ export const CorporateView = () => {
                       </p>
                     </div>
 
-                    {/* Features */}
-                    <ul className="mt-6 space-y-2.5 border-t pt-5" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                      {svc.features.map((f, fi) => (
-                        <li key={fi} className="flex items-center gap-3 text-[13px] text-slate-500">
-                          <span
-                            className="shrink-0 w-1.5 h-1.5 rounded-full"
-                            style={{ backgroundColor: svc.accent }}
-                          />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Features — clean list + CTA */}
+                    <div className="mt-6 border-t pt-5 flex flex-col gap-3" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                      <ul className="space-y-2">
+                        {svc.features.map((f, fi) => (
+                          <li key={fi} className="text-[13px] text-slate-400 tracking-wide leading-relaxed">
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                      <button className="mt-1 self-start flex items-center gap-2 text-[11px] font-semibold tracking-[0.14em] uppercase text-white/50 hover:text-white transition-colors duration-300 group/btn">
+                        <span>Conocer más</span>
+                        <ArrowRight size={11} className="group-hover/btn:translate-x-1 transition-transform duration-300" style={{ color: svc.accent }} />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Glass border overlay */}
