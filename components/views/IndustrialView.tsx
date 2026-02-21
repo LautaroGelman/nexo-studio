@@ -34,7 +34,7 @@ export const IndustrialView = () => {
       animate="visible"
       exit={{ opacity: 0 }}
       variants={containerVariants}
-      className="min-h-screen pt-16 sm:pt-20 bg-white text-slate-900 font-sans selection:bg-yellow-400 selection:text-black overflow-x-hidden"
+      className="min-h-screen pt-12 sm:pt-20 bg-white text-slate-900 font-sans selection:bg-yellow-400 selection:text-black overflow-x-hidden"
     >
 
       <section className="relative min-h-[50vh] md:min-h-[60vh] py-16 md:py-24 flex flex-col justify-center px-4 sm:px-6 md:px-12 bg-neutral-900 text-white overflow-hidden">

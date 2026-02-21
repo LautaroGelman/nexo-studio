@@ -27,7 +27,7 @@ export const Navbar = ({
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all safe-top">
-      <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+      <div className="container mx-auto px-3 sm:px-6 h-12 sm:h-20 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xl sm:text-2xl font-bold cursor-pointer text-black shrink-0" onClick={() => { setView("Home"); setIsOpen(false); }}>
           <img 
             src="/nexo-logo.png" 
@@ -105,7 +105,7 @@ export const Navbar = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 top-16 bg-black/20 backdrop-blur-sm z-40"
+              className="lg:hidden fixed inset-0 top-12 sm:top-20 bg-black/20 backdrop-blur-sm z-40"
               onClick={() => setIsOpen(false)}
             />
             
@@ -114,16 +114,16 @@ export const Navbar = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ type: "spring", bounce: 0, duration: 0.35 }}
-              className="lg:hidden fixed left-0 right-0 top-16 z-50 bg-white border-b border-gray-100 shadow-xl max-h-[calc(100dvh-4rem)] overflow-y-auto"
+              className="lg:hidden fixed left-0 right-0 top-12 sm:top-20 z-50 bg-white border-b border-gray-100 shadow-xl max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto"
             >
-              <div className="flex flex-col p-4 gap-1.5 safe-bottom">
+              <div className="flex flex-col p-3 gap-1 safe-bottom">
                 {/* Home / Nosotros item */}
                 <button
                   onClick={() => {
                     setView("Home");
                     setIsOpen(false);
                   }}
-                  className={`p-4 rounded-xl text-left flex items-center gap-3 transition-all text-base font-medium ${
+                  className={`p-3 rounded-xl text-left flex items-center gap-3 transition-all text-sm font-medium ${
                     activeView === "Home" 
                       ? "bg-black text-white shadow-lg shadow-black/10" 
                       : "hover:bg-gray-50 text-gray-800 active:bg-gray-100"
@@ -148,7 +148,7 @@ export const Navbar = ({
                       setView(item.id);
                       setIsOpen(false);
                     }}
-                    className={`p-4 rounded-xl text-left flex items-center gap-3 transition-all text-base font-medium ${
+                    className={`p-3 rounded-xl text-left flex items-center gap-3 transition-all text-sm font-medium ${
                       activeView === item.id 
                         ? "bg-black text-white shadow-lg shadow-black/10" 
                         : "hover:bg-gray-50 text-gray-800 active:bg-gray-100"

@@ -44,14 +44,34 @@ function AnimatedStat({ valueString }: { valueString: string }) {
 export const CorporateView = () => {
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
 
-  // ── Scroll-Driven Services ──────────────────────────────────────────────
+  // ── Scroll-Driven Services (desktop) ─────────────────────────────────────
   const servicesRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: servicesRef,
     offset: ["start start", "end end"],
   });
 
-  // Hide navbar while pinned inside the services section
+  // ── Scroll-Driven Services (mobile) ─────────────────────────────────────
+  const mobileServicesRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: mobileSvcProgress } = useScroll({
+    target: mobileServicesRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Each card slides up + fades in sequentially, then stays visible
+  const mc0o = useTransform(mobileSvcProgress, [0.00, 0.18], [0, 1]);
+  const mc0y = useTransform(mobileSvcProgress, [0.00, 0.18], [48, 0]);
+  const mc1o = useTransform(mobileSvcProgress, [0.28, 0.48], [0, 1]);
+  const mc1y = useTransform(mobileSvcProgress, [0.28, 0.48], [48, 0]);
+  const mc2o = useTransform(mobileSvcProgress, [0.58, 0.78], [0, 1]);
+  const mc2y = useTransform(mobileSvcProgress, [0.58, 0.78], [48, 0]);
+  const mobileCards = [
+    { opacity: mc0o, y: mc0y },
+    { opacity: mc1o, y: mc1y },
+    { opacity: mc2o, y: mc2y },
+  ];
+
+  // Hide navbar while pinned inside the services section (desktop only)
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (v) => {
       if (v > 0.01 && v < 0.99) {
@@ -137,7 +157,7 @@ export const CorporateView = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-16 sm:pt-20 bg-white font-sans text-slate-900"
+      className="min-h-screen pt-12 sm:pt-20 bg-white font-sans text-slate-900"
     >
 
       {/* IMPROVED HERO */}
@@ -147,13 +167,13 @@ export const CorporateView = () => {
         <div className="absolute top-0 right-0 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] bg-blue-600/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-emerald-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3" />
 
-        <div className="container mx-auto relative z-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-16 sm:pt-10">
+        <div className="container mx-auto relative z-20 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center pt-10 sm:pt-10">
           {/* Text Content */}
           <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-left"
+            className="text-center lg:text-left flex flex-col items-center lg:items-start"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-900/30 border border-blue-800 text-blue-300 text-[10px] sm:text-xs font-semibold tracking-widest uppercase mb-4 sm:mb-6">
               <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
@@ -167,12 +187,12 @@ export const CorporateView = () => {
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-400 mb-8 sm:mb-10 leading-relaxed max-w-xl border-l-4 border-emerald-500 pl-4 sm:pl-6">
+            <p className="text-base sm:text-lg text-slate-400 mb-8 sm:mb-10 leading-relaxed max-w-xl border-l-4 border-emerald-500 pl-4 sm:pl-6 text-left">
               Integramos consultoría de alto nivel con soluciones financieras y legales. 
               Transformamos la complejidad corporativa en ventajas competitivas sostenibles.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
               <button className="group relative bg-white text-slate-900 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold hover:bg-slate-100 transition-all flex items-center justify-center gap-3 overflow-hidden">
                 <span className="relative z-10">Agendar Consultoría</span>
                 <ArrowRight size={18} className="relative z-10 group-hover:translate-x-1 transition-transform" />
@@ -184,10 +204,9 @@ export const CorporateView = () => {
             </div>
 
             {/* Trust Indicators */}
-            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-800/60 flex flex-col gap-4">
+            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-800/60 w-full flex flex-col items-center lg:items-start gap-4">
               <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Confían en nosotros</p>
-              <div className="flex gap-4 sm:gap-6 opacity-40 grayscale mix-blend-screen items-center flex-wrap">
-                 {/* Simple Geometric logos for placeholders */}
+              <div className="flex gap-4 sm:gap-6 opacity-40 grayscale mix-blend-screen items-center flex-wrap justify-center lg:justify-start">
                  <div className="flex items-center gap-2"><div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 border-white"></div><span className="font-bold text-sm sm:text-lg">AEXA</span></div>
                  <div className="flex items-center gap-2"><div className="w-5 h-5 sm:w-6 sm:h-6 rotate-45 border-2 border-white"></div><span className="font-bold text-sm sm:text-lg">NOVUS</span></div>
                  <div className="flex items-center gap-2"><div className="w-5 h-5 sm:w-6 sm:h-6 rounded-sm border-2 border-white"></div><span className="font-bold text-sm sm:text-lg">VERTEX</span></div>
@@ -315,25 +334,105 @@ export const CorporateView = () => {
 
       {/* ── SERVICES — Scroll-Driven Sticky ── */}
 
-      {/* Mobile-only static header (sticky section not scroll-animatable on mobile) */}
-      <div className="md:hidden bg-[#04060f] px-6 pt-14 pb-8 text-center">
-        <p className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-4">
-          <span className="block w-5 h-px bg-slate-700" />
-          Servicios Corporativos
-          <span className="block w-5 h-px bg-slate-700" />
-        </p>
-        <h2 className="text-3xl font-bold text-white tracking-tight leading-tight">
-          Nuestra{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-white to-slate-400">
-            Expertise
-          </span>
-        </h2>
-        <p className="mt-3 text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">
-          Cubrimos cada ángulo de su corporación con especialistas de primer nivel.
-        </p>
+      {/* ── SERVICES — Mobile Scroll-Driven Sticky (md:hidden) ── */}
+      <div ref={mobileServicesRef} className="md:hidden relative h-[380vh]">
+        <div
+          className="sticky top-0 h-screen overflow-hidden flex flex-col"
+          style={{ backgroundColor: "#04060f" }}
+        >
+          {/* Background grid */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+                backgroundSize: "48px 48px",
+              }}
+            />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_30%,#04060f_100%)]" />
+            <div
+              className="absolute inset-0 blur-[120px]"
+              style={{ background: "radial-gradient(ellipse at 50% 40%, rgba(59,130,246,0.15) 0%, transparent 70%)" }}
+            />
+          </div>
+
+          {/* Header */}
+          <div className="relative z-10 text-center pt-10 pb-5 shrink-0">
+            <p className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-3">
+              <span className="block w-5 h-px bg-slate-700" />
+              Servicios Corporativos
+              <span className="block w-5 h-px bg-slate-700" />
+            </p>
+            <h2 className="text-3xl font-bold text-white tracking-tight leading-tight">
+              Nuestra{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-white to-slate-400">
+                Expertise
+              </span>
+            </h2>
+          </div>
+
+          {/* Cards — build up vertically */}
+          <div className="relative z-10 flex flex-col gap-3 px-4 pb-4 overflow-hidden flex-1 justify-center">
+            {services.map((svc, idx) => (
+              <motion.div
+                key={idx}
+                style={{ opacity: mobileCards[idx].opacity, y: mobileCards[idx].y }}
+                className="flex flex-row rounded-2xl overflow-hidden"
+              >
+                <div
+                  className="flex flex-row w-full rounded-2xl overflow-hidden"
+                  style={{ backgroundColor: "#0c1120", boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.08), 0 0 30px rgba(${svc.glow},0.08)` }}
+                >
+                  {/* Image — left side */}
+                  <div className="relative shrink-0 w-28 overflow-hidden">
+                    <img
+                      src={svc.imageUrl}
+                      alt={svc.title}
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                    />
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: `linear-gradient(to right, transparent 60%, #0c1120 100%)` }}
+                    />
+                    {/* Num badge */}
+                    <div className="absolute top-2 left-2">
+                      <span
+                        className="text-[10px] font-bold tracking-widest px-1.5 py-0.5 rounded-full border"
+                        style={{ color: svc.accent, borderColor: `${svc.accent}50`, backgroundColor: `${svc.accent}15` }}
+                      >
+                        {svc.num}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content — right side */}
+                  <div className="flex flex-col justify-center flex-1 px-4 py-4">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <div className="w-5 h-[2px] rounded-full" style={{ backgroundColor: svc.accent }} />
+                      <h3 className="text-sm font-bold text-white leading-tight">{svc.title}</h3>
+                    </div>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-3 line-clamp-2">{svc.desc}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {svc.features.map((f, fi) => (
+                        <span
+                          key={fi}
+                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                          style={{ color: svc.accent, backgroundColor: `${svc.accent}15`, border: `1px solid ${svc.accent}30` }}
+                        >
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <section ref={servicesRef} className="relative h-[500vh]">
+      {/* ── SERVICES — Desktop Scroll-Driven (hidden on mobile) ── */}
+      <section ref={servicesRef} className="hidden md:block relative h-[500vh]">
         <div
           className="sticky top-0 h-screen overflow-hidden"
           style={{ backgroundColor: "#04060f" }}

@@ -94,8 +94,8 @@ export const HomeView = ({
   onNavigate: (view: ViewType) => void;
 }) => {
   const { scrollY } = useScroll();
-  const convertOpacity = useTransform(scrollY, [0, 100], [0.15, 1]);
-  const convertBlur = useTransform(scrollY, [0, 100], ["blur(8px)", "blur(0px)"]);
+  const convertOpacity = useTransform(scrollY, [0, 35], [0.15, 1]);
+  const convertBlur = useTransform(scrollY, [0, 35], ["blur(6px)", "blur(0px)"]);
 
   // Refs para el Showcase 3D
   const showcaseRef = useRef<HTMLDivElement>(null);
@@ -109,7 +109,7 @@ export const HomeView = ({
   };
 
   return (
-    <div className="min-h-screen pt-16 sm:pt-20 bg-white selection:bg-black selection:text-white">
+    <div className="min-h-screen pt-12 sm:pt-20 bg-white selection:bg-black selection:text-white">
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0 }}

@@ -50,7 +50,7 @@ export const HealthView = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-16 sm:pt-20 bg-white text-slate-800 font-sans selection:bg-emerald-100 overflow-x-hidden"
+      className="min-h-screen pt-12 sm:pt-20 bg-white text-slate-800 font-sans selection:bg-emerald-100 overflow-x-hidden"
     >
 
       <section className="relative min-h-[50vh] md:min-h-[60vh] py-16 md:py-24 flex items-center overflow-hidden bg-gradient-to-b from-emerald-50/50 to-white">

@@ -77,7 +77,7 @@ export const GastroView = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-16 sm:pt-20 bg-[#0c0c0c] text-stone-200 font-serif selection:bg-amber-500/30 overflow-x-hidden"
+      className="min-h-screen pt-12 sm:pt-20 bg-[#0c0c0c] text-stone-200 font-serif selection:bg-amber-500/30 overflow-x-hidden"
     >
 
       {/* HERO */}

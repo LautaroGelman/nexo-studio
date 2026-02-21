@@ -99,7 +99,7 @@ export const CatalogView = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-16 sm:pt-20 bg-[#FDFBF7] text-gray-900 font-sans selection:bg-orange-200 overflow-x-hidden"
+      className="min-h-screen pt-12 sm:pt-20 bg-[#FDFBF7] text-gray-900 font-sans selection:bg-orange-200 overflow-x-hidden"
     >
 
       <div className="bg-gray-900 text-white text-[10px] sm:text-xs text-center py-2 tracking-widest uppercase font-medium px-4">
