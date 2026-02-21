@@ -122,7 +122,8 @@ export const CorporateView = () => {
   const processRef = useRef<HTMLElement>(null);
   // Ampliamos el offset para que la luz empiece antes y termine después de la sección
   const { scrollYProgress: processP } = useScroll({ target: processRef, offset: ["start end", "end start"] });
-  const smoothProcessP = useSpring(processP, { damping: 20, stiffness: 100 });
+  // Aumentamos el damping y bajamos el stiffness para que el movimiento sea mucho más suave y menos "shaky" en móviles
+  const smoothProcessP = useSpring(processP, { damping: 40, stiffness: 50, mass: 1 });
   
   // La luz viaja desde arriba (fuera de la pantalla) hasta abajo (fuera de la pantalla)
   const lightY = useTransform(smoothProcessP, [0, 1], ["-20%", "120%"]);
@@ -571,7 +572,8 @@ export const CorporateView = () => {
             top: lightY,
             left: lightX,
             x: "-50%",
-            y: "-50%"
+            y: "-50%",
+            willChange: "transform, top, left" // Optimización para móviles
           }}
         />
         
