@@ -260,11 +260,44 @@ export const FashionView = ({ onStickyChange }: { onStickyChange?: (v: boolean) 
               <ProductCard image="/moda7.png" title="Marigold Pantalón" price="219,00" tag="SS26" aspectClass="aspect-[3/4]" />
             </div>
           </div>
-          {/* Mobile: single column */}
-          <div className="flex flex-col gap-12 md:hidden">
-            <ProductCard image="/moda4.png" title="Esencia Oversize" price="165,00" tag="EXCLUSIVO" aspectClass="aspect-[3/4]" />
-            <ProductCard image="/moda3.png" title="Winona Traje Atelier" price="409,00" tag="NUEVO" aspectClass="aspect-[3/4]" />
-            <ProductCard image="/moda7.png" title="Marigold Pantalón" price="219,00" tag="SS26" aspectClass="aspect-[3/4]" />
+          {/* Mobile: Card Stack Experience */}
+          <div className="md:hidden relative w-full pb-20" style={{ height: '220vh' }}>
+            <div className="sticky top-[12vh] h-[65vh] w-full px-4 z-10">
+              <div className="w-full h-full bg-white shadow-[0_0_40px_rgba(0,0,0,0.1)] rounded-2xl overflow-hidden border border-gray-100 flex flex-col">
+                <div className="relative h-[75%] w-full overflow-hidden bg-[#f5f4f2]">
+                  <img src="/moda4.png" alt="Esencia Oversize" className="w-full h-full object-cover" />
+                  <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-bold px-3 py-1.5 uppercase tracking-widest">EXCLUSIVO</div>
+                </div>
+                <div className="flex-1 flex flex-col justify-center items-center text-center px-4">
+                  <h4 className="text-sm font-bold uppercase tracking-widest text-gray-900 mb-2">Esencia Oversize</h4>
+                  <span className="text-gray-600 text-xs font-medium tracking-widest">165,00 €</span>
+                </div>
+              </div>
+            </div>
+            <div className="sticky top-[16vh] h-[65vh] w-full px-4 z-20 mt-[40vh]">
+              <div className="w-full h-full bg-white shadow-[0_0_40px_rgba(0,0,0,0.1)] rounded-2xl overflow-hidden border border-gray-100 flex flex-col">
+                <div className="relative h-[75%] w-full overflow-hidden bg-[#f5f4f2]">
+                  <img src="/moda3.png" alt="Winona Traje Atelier" className="w-full h-full object-cover" />
+                  <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-bold px-3 py-1.5 uppercase tracking-widest">NUEVO</div>
+                </div>
+                <div className="flex-1 flex flex-col justify-center items-center text-center px-4">
+                  <h4 className="text-sm font-bold uppercase tracking-widest text-gray-900 mb-2">Winona Traje Atelier</h4>
+                  <span className="text-gray-600 text-xs font-medium tracking-widest">409,00 €</span>
+                </div>
+              </div>
+            </div>
+            <div className="sticky top-[20vh] h-[65vh] w-full px-4 z-30 mt-[40vh]">
+              <div className="w-full h-full bg-white shadow-[0_0_40px_rgba(0,0,0,0.1)] rounded-2xl overflow-hidden border border-gray-100 flex flex-col">
+                <div className="relative h-[75%] w-full overflow-hidden bg-[#f5f4f2]">
+                  <img src="/moda7.png" alt="Marigold Pantalón" className="w-full h-full object-cover" />
+                  <div className="absolute top-4 left-4 bg-black text-white text-[10px] font-bold px-3 py-1.5 uppercase tracking-widest">SS26</div>
+                </div>
+                <div className="flex-1 flex flex-col justify-center items-center text-center px-4">
+                  <h4 className="text-sm font-bold uppercase tracking-widest text-gray-900 mb-2">Marigold Pantalón</h4>
+                  <span className="text-gray-600 text-xs font-medium tracking-widest">219,00 €</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -424,42 +457,44 @@ export const FashionView = ({ onStickyChange }: { onStickyChange?: (v: boolean) 
 
           </div>
 
-          {/* ── MOBILE: editorial text + full image, no inherited height ── */}
-          <div className="md:hidden flex flex-col bg-white">
-
-            {/* Part A — text on white */}
-            <div className="px-7 pt-14 pb-10 flex flex-col gap-5">
-              <span className="text-[9px] font-bold tracking-[0.45em] uppercase text-gray-400">
+          {/* ── MOBILE: Split Screen Sticky (Top Fixed, Bottom Scrolls) ── */}
+          <div className="md:hidden relative bg-black" style={{ height: '250vh' }}>
+            {/* Top Half - Sticky */}
+            <div className="sticky top-0 h-[50vh] w-full bg-black text-white flex flex-col justify-center px-8 z-20 shadow-2xl">
+              <span className="text-[9px] font-bold tracking-[0.45em] uppercase text-gray-400 mb-4 block">
                 Atelier SS26
               </span>
-              <TextReveal
-                text="La materia prima es la primera decisión."
-                as="h3"
-                className="text-[8vw] font-black tracking-tighter text-gray-900 uppercase leading-[1.1]"
-                delay={0.05}
-              />
-              <p className="text-gray-500 text-[3.8vw] leading-loose font-light">
-                Cada tela seleccionada a mano. Cada corte pensado para durar. VÉLURE no sigue tendencias — las anticipa con silencio y precisión.
+              <h3 className="text-[7vw] font-black tracking-tighter uppercase leading-[1.1] mb-4">
+                La materia prima<br />es la primera<br />decisión.
+              </h3>
+              <p className="text-gray-400 text-[3.5vw] leading-relaxed font-light">
+                VÉLURE no sigue tendencias — las anticipa con silencio y precisión.
               </p>
-              <a
-                href="#"
-                className="mt-2 self-start inline-flex items-center gap-3 text-[10px] uppercase font-bold tracking-[0.25em] border-b border-black pb-1 text-gray-900 active:opacity-40 transition-opacity"
-              >
-                <span>Nuestra filosofía</span>
-                <ArrowRight size={11} />
-              </a>
             </div>
-
-            {/* Part B — full portrait image, no crop */}
-            <div className="relative w-full aspect-[3/4] overflow-hidden">
-              <img
-                src="/moda9.png"
-                alt="Atelier VÉLURE"
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+            
+            {/* Bottom Half - Scrolling Content */}
+            <div className="relative z-10 w-full flex flex-col">
+              <div className="h-[50vh] w-full relative">
+                <img src="/moda9.png" className="w-full h-full object-cover grayscale" alt="Atelier 1" />
+                <div className="absolute inset-0 bg-black/20"></div>
+              </div>
+              <div className="h-[50vh] w-full relative">
+                <img src="/moda10.png" className="w-full h-full object-cover" alt="Atelier 2" />
+                <div className="absolute inset-0 bg-black/10"></div>
+              </div>
+              <div className="h-[50vh] w-full relative">
+                <img src="/moda11.png" className="w-full h-full object-cover grayscale" alt="Atelier 3" />
+                <div className="absolute inset-0 bg-black/20"></div>
+              </div>
+              <div className="h-[50vh] w-full bg-white flex flex-col items-center justify-center text-black">
+                <span className="w-12 h-12 rounded-full border border-black flex items-center justify-center mb-4 animate-bounce">
+                  <ArrowRight size={16} className="transform rotate-90" />
+                </span>
+                <a href="#" className="text-xs font-bold uppercase tracking-[0.3em] border-b border-black pb-1">
+                  Descubrir Atelier
+                </a>
+              </div>
             </div>
-
           </div>
 
         </section>
@@ -479,33 +514,35 @@ export const FashionView = ({ onStickyChange }: { onStickyChange?: (v: boolean) 
         <HorizontalScrollSection />
 
         {/* Must Have - Surprising Cinematic Images */}
-        <section className="grid grid-cols-1 md:grid-cols-2">
+        <section className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-2 hide-scrollbar">
           {/* moda12: 560×745 portrait — shown full inside letterboxed container */}
-          <div className="group relative overflow-hidden h-[70vh] md:h-screen cursor-pointer bg-[#0d0d0d] flex items-center justify-center">
+          <div className="snap-center shrink-0 w-[90vw] md:w-auto group relative overflow-hidden h-[70vh] md:h-screen cursor-pointer bg-[#0d0d0d] flex items-center justify-center mx-4 md:mx-0 rounded-2xl md:rounded-none my-8 md:my-0">
             <img 
               src="/moda12.png" 
               alt="Abrigos Must Have"
               className="h-full w-auto max-w-full object-contain transform scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out-expo"
             />
             <div className="absolute inset-0"></div>
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col items-center justify-center">
-              <span className="text-white text-xs font-bold tracking-[0.5em] translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo">DESCUBRE</span>
-              <h3 className="text-white text-5xl md:text-6xl font-black mt-4 uppercase tracking-tighter -translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo delay-75">Abrigos</h3>
+            <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col items-center justify-center">
+              <span className="text-white text-xs font-bold tracking-[0.5em] md:translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo">DESCUBRE</span>
+              <h3 className="text-white text-5xl md:text-6xl font-black mt-4 uppercase tracking-tighter md:-translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo delay-75">Abrigos</h3>
             </div>
           </div>
           {/* moda13: 555×743 portrait — full image visible */}
-          <div className="group relative overflow-hidden h-[70vh] md:h-screen cursor-pointer bg-[#111] flex items-center justify-center">
+          <div className="snap-center shrink-0 w-[90vw] md:w-auto group relative overflow-hidden h-[70vh] md:h-screen cursor-pointer bg-[#111] flex items-center justify-center mx-4 md:mx-0 rounded-2xl md:rounded-none my-8 md:my-0">
             <img 
               src="/moda13.png" 
               alt="Archivo Must Have"
               className="h-full w-auto max-w-full object-contain transform scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out-expo"
             />
             <div className="absolute inset-0"></div>
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col items-center justify-center">
-              <span className="text-white text-xs font-bold tracking-[0.5em] translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo">EXPLORA</span>
-              <h3 className="text-white text-5xl md:text-6xl font-black mt-4 uppercase tracking-tighter -translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo delay-75">Archivo</h3>
+            <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col items-center justify-center">
+              <span className="text-white text-xs font-bold tracking-[0.5em] md:translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo">EXPLORA</span>
+              <h3 className="text-white text-5xl md:text-6xl font-black mt-4 uppercase tracking-tighter md:-translate-y-10 group-hover:translate-y-0 transition-transform duration-700 ease-out-expo delay-75">Archivo</h3>
             </div>
           </div>
+          {/* Spacer for mobile scroll snap to end nicely */}
+          <div className="snap-center shrink-0 w-[10vw] md:hidden"></div>
         </section>
 
         {/* Instagram/Community Grid */}
@@ -625,9 +662,14 @@ export const FashionView = ({ onStickyChange }: { onStickyChange?: (v: boolean) 
           animation: hero-scale 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Custom Clip Reveal Classes */
-        .clip-reveal { clip-path: inset(100% 0 0 0); }
-        .clip-reveal-active { clip-path: inset(0 0 0 0); }
+          /* Hide Scrollbar */
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
       `}} />
     </div>
   );
