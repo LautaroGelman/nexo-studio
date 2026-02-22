@@ -4,7 +4,6 @@ export type ViewType =
   | "Gastronomica"
   | "Catalogo"
   | "Salud"
-  | "Industrial"
   | "Moda";
 
 export interface NavItem {

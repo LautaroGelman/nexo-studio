@@ -9,7 +9,6 @@ import { CorporateView } from "@/components/views/CorporateView";
 import { GastroView } from "@/components/views/GastroView";
 import { CatalogView } from "@/components/views/CatalogView";
 import { HealthView } from "@/components/views/HealthView";
-import { IndustrialView } from "@/components/views/IndustrialView";
 import { FashionView } from "@/components/views/FashionView";
 
 export default function Page() {
@@ -43,10 +42,6 @@ export default function Page() {
 
         {currentView === "Salud" && (
           <HealthView key="health" />
-        )}
-
-        {currentView === "Industrial" && (
-          <IndustrialView key="industrial" />
         )}
 
         {currentView === "Moda" && (

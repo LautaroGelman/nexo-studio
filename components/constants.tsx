@@ -4,9 +4,7 @@ import {
   Utensils,
   Briefcase,
   Gem,
-  Cpu,
   ShoppingBag,
-  Factory,
   Shirt,
 } from "lucide-react";
 import { NavItem, StyleCard } from "./types";
@@ -17,7 +15,6 @@ export const NAV_ITEMS: NavItem[] = [
   { id: "Gastronomica", label: "Gastronómica", icon: <Utensils size={18} /> },
   { id: "Catalogo", label: "Catálogo", icon: <Briefcase size={18} /> },
   { id: "Salud", label: "Salud/Estética", icon: <Gem size={18} /> },
-  { id: "Industrial", label: "Industrial", icon: <Cpu size={18} /> },
   { id: "Moda", label: "Moda / Fashion", icon: <Shirt size={18} /> },
 ];
 
@@ -60,16 +57,6 @@ export const STYLE_CARDS: StyleCard[] = [
     image:
       "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80",
     icon: <Gem size={18} />,
-  },
-  {
-    id: "Industrial",
-    title: "Industrial",
-    subtitle: "Fuerza, impacto, ultra legible y contundente.",
-    bullets: ["Hero brutalista", "Stats banner", "Marquee clients + CTA"],
-    accent: "from-yellow-400/20 via-neutral-900/10 to-orange-500/10",
-    image:
-      "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80",
-    icon: <Factory size={18} />,
   },
   {
     id: "Moda",
