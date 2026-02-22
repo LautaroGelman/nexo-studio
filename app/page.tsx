@@ -10,9 +10,11 @@ import { GastroView } from "@/components/views/GastroView";
 import { CatalogView } from "@/components/views/CatalogView";
 import { HealthView } from "@/components/views/HealthView";
 import { IndustrialView } from "@/components/views/IndustrialView";
+import { FashionView } from "@/components/views/FashionView";
 
 export default function Page() {
   const [currentView, setCurrentView] = useState<ViewType>("Home");
+  const [navHidden, setNavHidden] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,7 +22,7 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-white relative font-sans text-gray-900">
-      <Navbar activeView={currentView} setView={setCurrentView} />
+      <Navbar activeView={currentView} setView={setCurrentView} isHidden={navHidden} />
 
       
         {currentView === "Home" && (
@@ -45,6 +47,10 @@ export default function Page() {
 
         {currentView === "Industrial" && (
           <IndustrialView key="industrial" />
+        )}
+
+        {currentView === "Moda" && (
+          <FashionView key="moda" onStickyChange={setNavHidden} />
         )}
       
     </main>

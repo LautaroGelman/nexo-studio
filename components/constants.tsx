@@ -7,6 +7,7 @@ import {
   Cpu,
   ShoppingBag,
   Factory,
+  Shirt,
 } from "lucide-react";
 import { NavItem, StyleCard } from "./types";
 
@@ -17,6 +18,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: "Catalogo", label: "Catálogo", icon: <Briefcase size={18} /> },
   { id: "Salud", label: "Salud/Estética", icon: <Gem size={18} /> },
   { id: "Industrial", label: "Industrial", icon: <Cpu size={18} /> },
+  { id: "Moda", label: "Moda / Fashion", icon: <Shirt size={18} /> },
 ];
 
 export const STYLE_CARDS: StyleCard[] = [
@@ -68,5 +70,14 @@ export const STYLE_CARDS: StyleCard[] = [
     image:
       "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80",
     icon: <Factory size={18} />,
+  },
+  {
+    id: "Moda",
+    title: "Moda / Fashion",
+    subtitle: "Editorial, cinematic, elegante y con identidad propia.",
+    bullets: ["Hero paralax full-screen", "Catálogo con scroll horizontal", "Footer newsletter + comunidad"],
+    accent: "from-rose-400/20 via-neutral-900/5 to-pink-300/20",
+    image: "/moda1.png",
+    icon: <Shirt size={18} />,
   },
 ];

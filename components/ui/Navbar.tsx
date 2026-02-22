@@ -7,9 +7,11 @@ import { NAV_ITEMS } from "../constants";
 export const Navbar = ({
   activeView,
   setView,
+  isHidden = false,
 }: {
   activeView: ViewType;
   setView: (v: ViewType) => void;
+  isHidden?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,7 +28,9 @@ export const Navbar = ({
   }, [isOpen]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all safe-top">
+    <nav className={`fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-transform duration-500 ease-in-out safe-top ${
+      isHidden ? '-translate-y-full' : 'translate-y-0'
+    }`}>
       <div className="container mx-auto px-3 sm:px-6 h-12 sm:h-20 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xl sm:text-2xl font-bold cursor-pointer text-black shrink-0" onClick={() => { setView("Home"); setIsOpen(false); }}>
           <img 
