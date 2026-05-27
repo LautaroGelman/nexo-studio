@@ -1,7 +1,13 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+  useReducedMotion,
+} from "framer-motion";
 import {
   ArrowRight,
   ChevronDown,
@@ -11,11 +17,16 @@ import {
   ShieldCheck,
   Zap,
   CheckCircle2,
+  MessageCircle,
+  Hand,
 } from "lucide-react";
-import { ViewType } from "../types";
-import { STYLE_CARDS } from "../constants";
+import { ViewType, StyleCard } from "../types";
+import { STYLE_CARDS, whatsappLink } from "../constants";
+import Particles from "../ui/Particles";
 
-// COMPONENTE: Tarjeta individual que reacciona al scroll
+/* ─────────────────────────────────────────────────────────────────
+   Stacked card del showcase 3D
+   ──────────────────────────────────────────────────────────────── */
 const StackedCard = ({
   card,
   i,
@@ -23,52 +34,65 @@ const StackedCard = ({
   progress,
   onNavigate,
 }: {
-  card: any;
+  card: StyleCard;
   i: number;
   total: number;
-  progress: any;
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
   onNavigate: (view: ViewType) => void;
 }) => {
   const entryStart = i === 0 ? 0 : (i - 1) / total;
   const entryEnd = i === 0 ? 0 : i / total;
 
-  const x = useTransform(progress, [entryStart, entryEnd], i === 0 ? ["0vw", "0vw"] : ["100vw", "0vw"]);
+  const x = useTransform(
+    progress,
+    [entryStart, entryEnd],
+    i === 0 ? ["0vw", "0vw"] : ["100vw", "0vw"]
+  );
   const scale = useTransform(progress, [entryEnd, 1], [1, 1 - (total - i) * 0.05]);
-  const y = useTransform(progress, [entryEnd, 1], ["0%", `-${(total - i) * 8}%`]);
-  const rotate = useTransform(progress, [entryStart, entryEnd], i === 0 ? [0, 0] : [15, 0]);
-  const opacity = useTransform(progress, [entryStart, entryEnd - 0.05], i === 0 ? [1, 1] : [0, 1]);
+  const y = useTransform(
+    progress,
+    [entryEnd, 1],
+    ["0%", `-${(total - i) * 8}%`]
+  );
+  const rotate = useTransform(
+    progress,
+    [entryStart, entryEnd],
+    i === 0 ? [0, 0] : [15, 0]
+  );
+  const opacity = useTransform(
+    progress,
+    [entryStart, entryEnd - 0.05],
+    i === 0 ? [1, 1] : [0, 1]
+  );
 
   return (
     <motion.button
       onClick={() => onNavigate(card.id)}
       style={{ x, y, scale, rotate, opacity, zIndex: i, willChange: "transform, opacity" }}
       className="absolute origin-top w-full max-w-[320px] sm:max-w-md text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] transition-shadow"
+      aria-label={`Ver demo ${card.title}`}
     >
       <div className="relative h-48 sm:h-64">
         <div className={`absolute inset-0 bg-gradient-to-br ${card.accent}`} />
         <img
           src={card.image}
-          alt={card.title}
+          alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-        <div className="absolute left-5 bottom-5 right-5 flex items-end justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/30 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm">
-              {card.icon}
-              {card.title}
-            </div>
-            <div className="mt-3 text-lg md:text-xl font-extrabold text-white leading-tight">
-              {card.subtitle}
-            </div>
+        <div className="absolute left-5 bottom-5 right-5">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/30 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm">
+            {card.icon}
+            {card.title}
+          </div>
+          <div className="mt-3 text-lg md:text-xl font-extrabold text-white leading-tight">
+            {card.subtitle}
           </div>
         </div>
       </div>
-
       <div className="p-5 sm:p-6 bg-black/90 backdrop-blur-xl relative z-10">
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-          {card.bullets.map((b: string, idx: number) => (
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+          {card.bullets.map((b, idx) => (
             <div
               key={idx}
               className="rounded-xl bg-white/10 border border-white/5 px-3 py-2 text-[10px] sm:text-xs font-semibold text-white/90 text-center"
@@ -78,9 +102,13 @@ const StackedCard = ({
           ))}
         </div>
         <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-          <div className="text-xs font-medium text-white/50">Abrir estilo</div>
+          <div className="text-xs font-medium text-white/50">Abrir demo</div>
           <div className="inline-flex items-center gap-2 text-sm font-bold text-white group">
-            Ver demo <ArrowRight size={16} className="text-white/70 group-hover:translate-x-1 transition-transform" />
+            Ver demo
+            <ArrowRight
+              size={16}
+              className="text-white/70 group-hover:translate-x-1 transition-transform"
+            />
           </div>
         </div>
       </div>
@@ -88,14 +116,100 @@ const StackedCard = ({
   );
 };
 
+/* ─────────────────────────────────────────────────────────────────
+   Mini formulario de brief — 60 segundos
+   ──────────────────────────────────────────────────────────────── */
+const BriefForm = () => {
+  const [name, setName] = useState("");
+  const [project, setProject] = useState("");
+  const [budget, setBudget] = useState("");
+  const [sent, setSent] = useState(false);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !project.trim()) return;
+    const msg = `Hola Nexo! Soy ${name}.
+Proyecto: ${project}
+Presupuesto: ${budget || "a definir"}`;
+    setSent(true);
+    window.open(whatsappLink(msg), "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <form
+      onSubmit={submit}
+      className="grid gap-3 sm:gap-4 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-5 sm:p-6"
+    >
+      <div className="grid sm:grid-cols-2 gap-3">
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-widest text-white/60 font-semibold">
+            Tu nombre
+          </span>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ej. Camila"
+            className="mt-1 w-full bg-white/5 border border-white/15 text-white placeholder:text-white/30 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-white/40 focus:bg-white/10 transition-colors"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[10px] uppercase tracking-widest text-white/60 font-semibold">
+            Presupuesto aprox.
+          </span>
+          <select
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            className="mt-1 w-full bg-white/5 border border-white/15 text-white rounded-lg px-3 py-2.5 text-sm outline-none focus:border-white/40 focus:bg-white/10 transition-colors"
+          >
+            <option value="" className="text-black">A definir</option>
+            <option value="$200k–500k" className="text-black">$200k – $500k</option>
+            <option value="$500k–1M" className="text-black">$500k – $1M</option>
+            <option value="$1M+" className="text-black">$1M+</option>
+          </select>
+        </label>
+      </div>
+      <label className="block">
+        <span className="text-[10px] uppercase tracking-widest text-white/60 font-semibold">
+          Contame del proyecto
+        </span>
+        <textarea
+          required
+          value={project}
+          onChange={(e) => setProject(e.target.value)}
+          rows={3}
+          placeholder="Soy dueño de un restaurante, quiero un sitio editorial con reservas…"
+          className="mt-1 w-full bg-white/5 border border-white/15 text-white placeholder:text-white/30 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-white/40 focus:bg-white/10 transition-colors resize-none"
+        />
+      </label>
+      <button
+        type="submit"
+        className="mt-1 inline-flex items-center justify-center gap-2 bg-white text-black font-bold rounded-xl py-3.5 px-5 text-sm hover:bg-gray-200 transition-colors"
+      >
+        <MessageCircle size={16} />
+        {sent ? "Abriendo WhatsApp…" : "Enviar por WhatsApp"}
+      </button>
+      <p className="text-[11px] text-white/50">
+        Te respondo personalmente en menos de 4hs hábiles. Sin formularios eternos.
+      </p>
+    </form>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────────────
+   HomeView
+   ──────────────────────────────────────────────────────────────── */
 export const HomeView = ({
   onNavigate,
 }: {
   onNavigate: (view: ViewType) => void;
 }) => {
+  const reduced = useReducedMotion();
   const { scrollY } = useScroll();
-  const convertOpacity = useTransform(scrollY, [0, 35], [0.15, 1]);
-  const convertBlur = useTransform(scrollY, [0, 35], ["blur(6px)", "blur(0px)"]);
+  // Reveal rápido: el texto se desvanece/desnubla entre 0 y 120px de scroll.
+  const convertOpacity = useTransform(scrollY, [0, 120], reduced ? [1, 1] : [0.25, 1]);
+  const convertBlur = useTransform(scrollY, [0, 120], reduced ? ["blur(0)", "blur(0)"] : ["blur(8px)", "blur(0px)"]);
 
   // Refs para el Showcase 3D
   const showcaseRef = useRef<HTMLDivElement>(null);
@@ -105,11 +219,18 @@ export const HomeView = ({
   });
 
   const scrollToShowcase = () => {
-    document.getElementById("showcase-section")?.scrollIntoView({ behavior: "smooth" });
+    document
+      .getElementById("showcase-section")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+  const scrollToContact = () => {
+    document
+      .getElementById("contact-section")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="min-h-screen pt-12 sm:pt-20 bg-white selection:bg-black selection:text-white">
+    <div className="min-h-screen pt-14 sm:pt-16 bg-white selection:bg-black selection:text-white">
       <AnimatePresence>
         <motion.div
           initial={{ opacity: 0 }}
@@ -117,27 +238,29 @@ export const HomeView = ({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Background grid */}
-          <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-
-          {/* HERO premium */}
+          {/* ── HERO ── */}
           <section className="relative overflow-hidden">
+            {/* Capa de partículas (full-bleed dentro del hero) */}
             <div className="absolute inset-0 -z-10">
-              <div className="absolute -top-40 -left-40 w-[560px] h-[560px] rounded-full blur-[90px] bg-gradient-to-br from-black/10 to-transparent" />
-              <div className="absolute -top-40 -right-40 w-[560px] h-[560px] rounded-full blur-[90px] bg-gradient-to-br from-emerald-500/10 to-transparent" />
-              <div className="absolute bottom-[-220px] left-1/2 -translate-x-1/2 w-[900px] h-[420px] rounded-full blur-[90px] bg-gradient-to-r from-indigo-500/10 via-black/5 to-amber-500/10" />
+              <Particles density={80} color="rgba(15,15,15,0.55)" linkDistance={140} />
             </div>
+            {/* Grid sutil sobre las partículas */}
+            <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
+            {/* Fade superior para ayudar la lectura del headline */}
+            <div className="absolute inset-x-0 top-0 -z-10 h-[60%] bg-gradient-to-b from-white via-white/85 to-transparent" />
 
-            <div className="container mx-auto px-4 sm:px-6 pt-4 pb-12 sm:pt-6 sm:pb-16 md:pt-14 md:pb-20">
+            <div className="container mx-auto px-4 sm:px-6 pt-6 pb-12 sm:pt-10 sm:pb-16 md:pt-16 md:pb-20">
               <div className="max-w-5xl mx-auto text-center">
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/70 backdrop-blur px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm"
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm"
                 >
                   <Sparkles size={14} className="shrink-0" />
-                  <span className="text-xs sm:text-sm">Diseño y desarrollo web premium · 2026</span>
+                  <span className="text-xs sm:text-sm">
+                    Estudio de diseño y desarrollo web · 2026
+                  </span>
                 </motion.div>
 
                 <motion.h1
@@ -156,7 +279,7 @@ export const HomeView = ({
                     style={{
                       opacity: convertOpacity,
                       filter: convertBlur,
-                      display: "inline-block"
+                      display: "inline-block",
                     }}
                   >
                     Y diseñados para{" "}
@@ -173,42 +296,74 @@ export const HomeView = ({
                   transition={{ delay: 0.3, duration: 0.7 }}
                   className="mt-4 sm:mt-6 text-base sm:text-lg md:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-1 sm:px-0"
                 >
-                  Tu presencia digital a medida. Desde $200.000. Diseño de alto nivel, dos ciclos de refinamiento para asegurar tu visión, y una entrega 100% funcional en solo 7 días.
+                  Diseño y desarrollo de alto nivel, 100% a medida. Dos ciclos de
+                  refinamiento para asegurar tu visión, y una entrega 100% funcional
+                  en hasta 7 días.
                 </motion.p>
+
+                {/* Aviso destacado: estos son demos, no plantillas */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.6 }}
+                  className="mt-6 sm:mt-7 inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 rounded-full border border-black/15 bg-black text-white text-[11px] sm:text-xs font-semibold"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <Layers size={12} /> Estas son demos
+                  </span>
+                  <span className="opacity-30">·</span>
+                  <span className="opacity-90 font-normal">
+                    no son plantillas. Cada diseño es hecho 100% a medida.
+                  </span>
+                </motion.div>
 
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45, duration: 0.6 }}
-                  className="mt-8 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 px-2 sm:px-0"
+                  transition={{ delay: 0.65, duration: 0.6 }}
+                  className="mt-7 sm:mt-9 flex flex-col sm:flex-row justify-center gap-3 px-2 sm:px-0"
                 >
                   <button
                     onClick={scrollToShowcase}
                     className="group px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-black text-white font-semibold text-base sm:text-lg hover:bg-gray-900 transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-2"
                   >
-                    Explorar diseños
-                    <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                    Explorar demos
+                    <ArrowRight
+                      size={20}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
                   </button>
+                  <a
+                    href={whatsappLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-white border border-gray-200 text-gray-900 font-semibold text-base sm:text-lg hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle size={18} />
+                    Hablar por WhatsApp
+                  </a>
                 </motion.div>
 
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 0.8 }}
+                  transition={{ delay: 0.85, duration: 0.8 }}
                   className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm text-gray-600 px-2 sm:px-0"
                 >
                   {[
-                    { icon: <ShieldCheck size={16} />, text: "Código limpio + performance" },
-                    { icon: <Layers size={16} />, text: "Diseño a medida" },
-                    { icon: <CheckCircle2 size={16} />, text: "2 iteraciones incluidas" },
                     { icon: <Zap size={16} />, text: "Entrega hasta 7 días" },
+                    { icon: <ShieldCheck size={16} />, text: "Código limpio, Lighthouse 95+" },
+                    { icon: <Layers size={16} />, text: "Diseño 100% a medida" },
+                    { icon: <CheckCircle2 size={16} />, text: "Vos sos dueño del código" },
                   ].map((b, i) => (
                     <div
                       key={i}
-                      className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-gray-200 bg-white/70 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2 shadow-sm"
+                      className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2 shadow-sm"
                     >
                       <span className="shrink-0">{b.icon}</span>
-                      <span className="font-semibold text-xs sm:text-sm">{b.text}</span>
+                      <span className="font-semibold text-xs sm:text-sm">
+                        {b.text}
+                      </span>
                     </div>
                   ))}
                 </motion.div>
@@ -229,12 +384,14 @@ export const HomeView = ({
             </div>
           </section>
 
-          {/* SECCIÓN SCROLL FALSO (STICKY 3D) */}
-          <section id="showcase-section" ref={showcaseRef} className="relative h-[400vh] w-full bg-slate-50 border-y border-gray-200/50">
+          {/* ── SHOWCASE 3D ── */}
+          <section
+            id="showcase-section"
+            ref={showcaseRef}
+            className="relative h-[400vh] w-full bg-slate-50 border-y border-gray-200/50"
+          >
             <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden px-4 sm:px-6">
-              
               <div className="container mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
-                {/* Lado del Texto (Fijo) */}
                 <div className="w-full lg:w-5/12 flex flex-col z-10">
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -243,17 +400,22 @@ export const HomeView = ({
                     className="inline-flex items-center w-fit gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 shadow-sm"
                   >
                     <LayoutTemplate size={14} />
-                    Showcase Interactivo
+                    Showcase interactivo
                   </motion.div>
                   <h2 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
                     Algunos ejemplos de lo que podemos hacer.
                   </h2>
                   <p className="mt-6 text-gray-600 text-lg sm:text-xl leading-relaxed max-w-lg">
-                    Estos son solo ejemplos, no usamos plantillas. A cada cliente le diseñamos una solución a medida, estructurada como un ecosistema premium pensado para convertir tus visitas en clientes.
+                    Son <b>demos</b> — no plantillas. A cada cliente le diseñamos una
+                    solución a medida, pensada como un ecosistema premium para
+                    convertir visitas en clientes.
                   </p>
+                  <div className="mt-6 inline-flex items-center gap-2 text-xs text-gray-500 self-start">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    5 estilos · navegá cada uno desde el menú "Demos"
+                  </div>
                 </div>
 
-                {/* Lado de las Cards (Animadas) */}
                 <div className="w-full lg:w-1/2 relative h-[55vh] sm:h-[65vh] flex items-center justify-center perspective-[1200px]">
                   {STYLE_CARDS.map((card, i) => (
                     <StackedCard
@@ -267,11 +429,10 @@ export const HomeView = ({
                   ))}
                 </div>
               </div>
-
             </div>
           </section>
 
-          {/* PROCESO + pricing (premium) */}
+          {/* ── PROCESO (sin precios) ── */}
           <section className="container mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-20">
             <div className="flex flex-col gap-16">
               <motion.div
@@ -287,20 +448,39 @@ export const HomeView = ({
                 <h3 className="mt-4 text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900">
                   Hecho a medida, con iteraciones claras.
                 </h3>
-                <p className="mt-4 text-gray-600 text-lg leading-relaxed max-w-xl">
-                  No es "plantilla". Diseñamos el look & feel, el contenido y los
-                  componentes con criterio de marca y conversión. Entregamos un sitio
-                  funcional, listo para usar.
+                <p className="mt-4 text-gray-600 text-lg leading-relaxed max-w-2xl">
+                  No es plantilla. Diseñamos el look &amp; feel, el contenido y los
+                  componentes con criterio de marca y conversión. Entregamos un
+                  sitio funcional, listo para usar.
                 </p>
 
                 <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   {[
-                    { icon: <ShieldCheck size={18} />, title: "Desde $200.000", desc: "Diseño + desarrollo premium, a medida." },
-                    { icon: <Layers size={18} />, title: "2 iteraciones", desc: "Dos rondas formales de revisión y cambios." },
-                    { icon: <Zap size={18} />, title: "Hasta 7 días", desc: "Entrega posterior al pedido: web funcional." },
-                    { icon: <CheckCircle2 size={18} />, title: "Listo para publicar", desc: "Estructura, secciones, CTA y responsive." },
+                    {
+                      icon: <Layers size={18} />,
+                      title: "100% a medida",
+                      desc: "Cero plantillas. Diseño y código únicos para tu marca.",
+                    },
+                    {
+                      icon: <ShieldCheck size={18} />,
+                      title: "Código limpio",
+                      desc: "Lighthouse 95+, accesible y mantenible.",
+                    },
+                    {
+                      icon: <Zap size={18} />,
+                      title: "Hasta 7 días",
+                      desc: "Entrega funcional posterior al pedido.",
+                    },
+                    {
+                      icon: <CheckCircle2 size={18} />,
+                      title: "2 iteraciones",
+                      desc: "Dos rondas formales de revisión y cambios.",
+                    },
                   ].map((f, i) => (
-                    <div key={i} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <div
+                      key={i}
+                      className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gray-900 text-white flex items-center justify-center">
                           {f.icon}
@@ -319,17 +499,18 @@ export const HomeView = ({
                     onClick={scrollToShowcase}
                     className="px-6 py-3.5 sm:py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition-colors text-center"
                   >
-                    Ver estilos
+                    Ver demos
                   </button>
                   <button
-                    onClick={() => onNavigate("Corporativa")}
+                    onClick={scrollToContact}
                     className="px-6 py-3.5 sm:py-3 rounded-xl bg-white border border-gray-200 text-gray-900 font-semibold hover:bg-gray-50 transition-colors text-center"
                   >
-                    Abrir demo corporativa
+                    Pedir cotización a medida
                   </button>
                 </div>
               </motion.div>
 
+              {/* Timeline de pasos */}
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -339,69 +520,53 @@ export const HomeView = ({
               >
                 <div className="flex items-center justify-between gap-3 sm:gap-4">
                   <div>
-                    <div className="text-xs sm:text-sm font-semibold text-gray-600">Entrega</div>
-                    <div className="text-xl sm:text-2xl font-extrabold text-gray-900">Hasta 7 días</div>
+                    <div className="text-xs sm:text-sm font-semibold text-gray-600">
+                      Entrega
+                    </div>
+                    <div className="text-xl sm:text-2xl font-extrabold text-gray-900">
+                      Hasta 7 días
+                    </div>
                   </div>
                   <div className="rounded-xl sm:rounded-2xl bg-black text-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold shrink-0">
-                    Desde $200.000
+                    100% a medida
                   </div>
                 </div>
 
-                <div className="mt-6 space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                    {[
-                      {
-                        step: "01",
-                        title: "Brief + referencia",
-                        desc: "Te pedimos contenido base y referencias. Definimos objetivo (ventas, reservas, contacto, catálogo).",
-                      },
-                      {
-                        step: "02",
-                        title: "Diseño premium",
-                        desc: "Componemos layout, tipografía, jerarquías, CTA y look & feel de marca.",
-                      },
-                      {
-                        step: "03",
-                        title: "Iteración 1",
-                        desc: "Primera revisión. Ajustes y mejoras por feedback.",
-                      },
-                      {
-                        step: "04",
-                        title: "Iteración 2",
-                        desc: "Segunda revisión. Refinamos detalles finales y consistencia.",
-                      },
-                      {
-                        step: "05",
-                        title: "Entrega funcional",
-                        desc: "Sitio listo para publicar, con responsive y buenas prácticas.",
-                      },
-                    ].map((s, i, arr) => (
-                      <motion.div
-                        key={s.step}
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.06, duration: 0.45 }}
-                        className={`relative rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-4 md:p-5 ${
-                          i < arr.length - 1
-                            ? "lg:after:content-['→'] lg:after:absolute lg:after:-right-3 lg:after:top-1/2 lg:after:-translate-y-1/2 lg:after:text-gray-300 lg:after:text-xl lg:after:font-semibold"
-                            : ""
-                        }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="shrink-0 w-10 h-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center font-extrabold text-sm">
-                            {s.step}
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {[
+                    { step: "D0", title: "Brief + referencia", desc: "Definimos objetivo (ventas, reservas, contacto)." },
+                    { step: "D2", title: "Diseño premium", desc: "Layout, tipografía, jerarquías y look & feel." },
+                    { step: "D4", title: "Iteración 1", desc: "Primera revisión, ajustes por feedback." },
+                    { step: "D6", title: "Iteración 2", desc: "Refinamiento de detalles finales." },
+                    { step: "D7", title: "Entrega funcional", desc: "Sitio listo para publicar, responsive." },
+                  ].map((s, i, arr) => (
+                    <motion.div
+                      key={s.step}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.06, duration: 0.45 }}
+                      className={`relative rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-4 md:p-5 ${
+                        i < arr.length - 1
+                          ? "lg:after:content-['→'] lg:after:absolute lg:after:-right-3 lg:after:top-1/2 lg:after:-translate-y-1/2 lg:after:text-gray-300 lg:after:text-xl lg:after:font-semibold"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="shrink-0 w-10 h-10 rounded-2xl bg-gray-900 text-white flex items-center justify-center font-extrabold text-xs tracking-tight">
+                          {s.step}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-gray-900 text-sm leading-snug">
+                            {s.title}
                           </div>
-                          <div className="min-w-0">
-                            <div className="font-bold text-gray-900 text-sm leading-snug">{s.title}</div>
-                            <div className="text-xs text-gray-600 leading-relaxed mt-1">
-                              {s.desc}
-                            </div>
+                          <div className="text-xs text-gray-600 leading-relaxed mt-1">
+                            {s.desc}
                           </div>
                         </div>
-                      </motion.div>
-                    ))}
-                  </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
 
                 <div className="mt-5 sm:mt-6 rounded-xl sm:rounded-2xl border border-gray-200 bg-gray-50 p-4 sm:p-5">
@@ -412,7 +577,8 @@ export const HomeView = ({
                     <div>
                       <div className="font-bold text-gray-900">Nota</div>
                       <div className="text-sm text-gray-600">
-                        "2 iteraciones" = dos rondas formales de revisión con pedidos de cambios, para asegurar calidad sin desbordes.
+                        "2 iteraciones" = dos rondas formales de revisión con
+                        pedidos de cambios, para asegurar calidad sin desbordes.
                       </div>
                     </div>
                   </div>
@@ -421,8 +587,11 @@ export const HomeView = ({
             </div>
           </section>
 
-          {/* CTA final */}
-          <section className="container mx-auto px-4 sm:px-6 pb-14 sm:pb-20">
+          {/* ── CTA FINAL CON FORM REAL + WHATSAPP ── */}
+          <section
+            id="contact-section"
+            className="container mx-auto px-4 sm:px-6 pb-14 sm:pb-20"
+          >
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -430,19 +599,44 @@ export const HomeView = ({
               transition={{ duration: 0.6 }}
               className="rounded-2xl sm:rounded-[2.5rem] bg-black text-white p-5 sm:p-8 md:p-12 overflow-hidden relative"
             >
+              <div className="absolute inset-0 -z-0 opacity-50">
+                <Particles density={50} color="rgba(255,255,255,0.55)" linkDistance={140} />
+              </div>
               <div className="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full bg-white/10 blur-[80px]" />
               <div className="absolute -bottom-48 -left-48 w-[520px] h-[520px] rounded-full bg-white/10 blur-[90px]" />
 
-              <div className="relative z-10 grid md:grid-cols-2 gap-10 items-center">
+              <div className="relative z-10 grid md:grid-cols-2 gap-10 items-start">
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
                     <Sparkles size={14} />
-                    Listo para vender mejor
+                    Hablemos de tu proyecto
                   </div>
                   <h3 className="mt-4 text-2xl sm:text-3xl md:text-5xl font-extrabold tracking-tight">
-                    Hagamos tu próxima landing.
+                    Hagamos tu próximo sitio.
                   </h3>
+                  <p className="mt-4 text-white/70 text-base sm:text-lg max-w-md">
+                    Contame qué necesitás y te respondo personalmente. Sin formularios eternos, sin promesas
+                    vacías.
+                  </p>
+
+                  <div className="mt-6 grid gap-3">
+                    <a
+                      href={whatsappLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 bg-[#25D366] text-black font-bold rounded-xl px-5 py-3.5 hover:brightness-110 transition w-fit"
+                    >
+                      <Hand size={18} />
+                      Abrir WhatsApp directo
+                      <ArrowRight size={18} />
+                    </a>
+                    <div className="text-[12px] text-white/50">
+                      O dejá un brief breve a la derecha — te respondo por WhatsApp.
+                    </div>
+                  </div>
                 </div>
+
+                <BriefForm />
               </div>
             </motion.div>
           </section>
@@ -455,10 +649,22 @@ export const HomeView = ({
                 </div>
                 Nexo Studio
               </div>
-              <div className="flex items-center gap-4">
-                <button onClick={scrollToShowcase} className="hover:text-gray-900 transition-colors">
-                  Explorar diseños
+              <div className="flex items-center gap-4 flex-wrap justify-center">
+                <button
+                  onClick={scrollToShowcase}
+                  className="hover:text-gray-900 transition-colors"
+                >
+                  Demos
                 </button>
+                <span className="opacity-30">•</span>
+                <a
+                  href={whatsappLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-gray-900 transition-colors"
+                >
+                  WhatsApp
+                </a>
                 <span className="opacity-30">•</span>
                 <span>&copy; 2026</span>
               </div>

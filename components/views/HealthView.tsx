@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   Gem,
@@ -10,9 +10,13 @@ import {
   Instagram,
   Facebook,
   MessageCircle,
+  Award,
+  ShieldCheck,
 } from "lucide-react";
+import { DemoProps } from "../types";
+import { whatsappLink } from "../constants";
 
-export const HealthView = () => {
+export const HealthView = ({ onBackToStudio }: DemoProps) => {
   const [activeService, setActiveService] = useState(0);
 
   const services = [
@@ -22,6 +26,9 @@ export const HealthView = () => {
       icon: <Gem size={24} />,
       desc: "Tratamientos no invasivos para rejuvenecimiento facial y corporal.",
       items: ["Botox & Fillers", "Bioestimulación", "Rinomodelación", "Peeling Químico"],
+      detail:
+        "Protocolos diseñados con visión artística y técnica médica. Resultados naturales, sin tiempos de recuperación largos.",
+      duration: "Sesiones desde 30 min · resultados visibles en 7-14 días.",
     },
     {
       id: 1,
@@ -29,6 +36,9 @@ export const HealthView = () => {
       icon: <Star size={24} />,
       desc: "Diseño de sonrisas y salud bucal con tecnología digital 3D.",
       items: ["Carillas de Porcelana", "Implantes Suizos", "Ortodoncia Invisible", "Blanqueamiento Láser"],
+      detail:
+        "Escaneo intraoral 3D, planificación digital y materiales de primera línea. Cada sonrisa se diseña junto al paciente.",
+      duration: "Plan completo en 3 a 6 sesiones según tratamiento.",
     },
     {
       id: 2,
@@ -36,23 +46,63 @@ export const HealthView = () => {
       icon: <Heart size={24} />,
       desc: "Cuidado experto de la salud de tu piel con diagnóstico avanzado.",
       items: ["Control de Acné", "Rosácea", "Mesoterapia", "Luz Pulsada"],
+      detail:
+        "Diagnóstico con dermatoscopía digital. Seguimiento personalizado y abordaje integral.",
+      duration: "Primera consulta + plan de seguimiento mensual.",
+    },
+  ];
+
+  const team = [
+    {
+      name: "Dra. M. Fernández",
+      role: "Dirección médica",
+      spec: "Med. Estética · MN 99·999",
+      img: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dr. L. García",
+      role: "Odontología",
+      spec: "Cirugía oral · MN 88·888",
+      img: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400",
+    },
+    {
+      name: "Dra. S. Romero",
+      role: "Dermatología",
+      spec: "Clínica + estética · MN 77·777",
+      img: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=400",
     },
   ];
 
   const testimonials = [
-    { text: "La atención es impecable desde que entras. El Dr. Martínez transformó mi sonrisa.", name: "Carla R.", role: "Paciente Ortodoncia" },
-    { text: "Tecnología de punta y un trato súper humano. Me sentí muy cuidada en todo momento.", name: "Sofía M.", role: "Paciente Estética" },
-    { text: "Resultados naturales, que era lo que más buscaba. Superaron mis expectativas.", name: "Luciana G.", role: "Paciente Facial" },
+    {
+      text: "La atención es impecable desde que entrás. El equipo transformó mi sonrisa.",
+      name: "Carla R.",
+      role: "Paciente Ortodoncia",
+    },
+    {
+      text: "Tecnología de punta y un trato súper humano. Me sentí muy cuidada en todo momento.",
+      name: "Sofía M.",
+      role: "Paciente Estética",
+    },
+    {
+      text: "Resultados naturales, que era lo que más buscaba. Superaron mis expectativas.",
+      name: "Luciana G.",
+      role: "Paciente Facial",
+    },
   ];
+
+  const current = services[activeService];
+  const reservar = (intent: string) =>
+    whatsappLink(`Hola Lumina (demo Nexo)! ${intent}`);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-12 sm:pt-20 bg-white text-slate-800 font-sans selection:bg-emerald-100 overflow-x-hidden"
+      className="min-h-screen pt-20 sm:pt-24 bg-white text-slate-800 font-sans selection:bg-emerald-100 overflow-x-hidden"
     >
-
+      {/* HERO */}
       <section className="relative min-h-[50vh] md:min-h-[60vh] py-16 md:py-24 flex items-center overflow-hidden bg-gradient-to-b from-emerald-50/50 to-white">
         <div className="absolute top-0 right-0 w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-emerald-100/40 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-[200px] sm:w-[400px] h-[200px] sm:h-[400px] bg-blue-50/40 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4" />
@@ -66,7 +116,7 @@ export const HealthView = () => {
               className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white border border-emerald-100 shadow-sm text-emerald-700 text-xs sm:text-sm font-semibold mb-5 sm:mb-8"
             >
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Excelencia en Bienestar
+              Excelencia en Bienestar · Demo Nexo
             </motion.div>
 
             <motion.h1
@@ -87,7 +137,8 @@ export const HealthView = () => {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-base sm:text-lg text-slate-500 mb-7 sm:mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed"
             >
-              Fusionamos ciencia médica, tecnología avanzada y una visión artística para resaltar tu mejor versión. Un espacio seguro, ético y profesional.
+              Fusionamos ciencia médica, tecnología avanzada y una visión artística
+              para resaltar tu mejor versión. Un espacio seguro, ético y profesional.
             </motion.p>
 
             <motion.div
@@ -96,13 +147,21 @@ export const HealthView = () => {
               transition={{ delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <button className="bg-emerald-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold hover:bg-emerald-700 transition-all shadow-[0_10px_20px_-5px_rgba(5,150,105,0.3)] flex items-center justify-center gap-2 w-full sm:w-auto">
+              <a
+                href={reservar("Quiero agendar una consulta inicial.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-emerald-600 text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold hover:bg-emerald-700 transition-all shadow-[0_10px_20px_-5px_rgba(5,150,105,0.3)] flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
                 Agendar Consulta
                 <ArrowRight size={18} />
-              </button>
-              <button className="bg-white text-slate-600 border border-slate-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto text-center">
+              </a>
+              <a
+                href="#equipo"
+                className="bg-white text-slate-600 border border-slate-200 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto text-center"
+              >
                 Nuestros Profesionales
-              </button>
+              </a>
             </motion.div>
 
             <div className="mt-8 sm:mt-12 flex items-center justify-center lg:justify-start gap-6 sm:gap-8">
@@ -112,8 +171,12 @@ export const HealthView = () => {
                 { label: "Especialistas", val: "12" },
               ].map((stat, i) => (
                 <div key={i} className="text-center lg:text-left">
-                  <div className="text-xl sm:text-2xl font-bold text-slate-900">{stat.val}</div>
-                  <div className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wide">{stat.label}</div>
+                  <div className="text-xl sm:text-2xl font-bold text-slate-900">
+                    {stat.val}
+                  </div>
+                  <div className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wide">
+                    {stat.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -125,13 +188,12 @@ export const HealthView = () => {
             transition={{ delay: 0.4, duration: 1 }}
             className="order-1 lg:order-2 relative"
           >
-            <div className="relative z-10 w-full aspect-[4/5] sm:aspect-[4/5] md:aspect-square rounded-2xl sm:rounded-[2rem] overflow-hidden shadow-2xl">
+            <div className="relative z-10 w-full aspect-[4/5] md:aspect-square rounded-2xl sm:rounded-[2rem] overflow-hidden shadow-2xl">
               <img
                 src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80"
-                alt="Healthy Skin"
+                alt=""
                 className="w-full h-full object-cover"
               />
-
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -143,69 +205,166 @@ export const HealthView = () => {
                     <Star size={20} fill="currentColor" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-800">Tecnología Láser 2024</div>
-                    <div className="text-xs text-slate-500">Certificación Internacional FDA</div>
+                    <div className="text-sm font-bold text-slate-800">
+                      Tecnología Láser 2024
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      Certificación Internacional FDA
+                    </div>
                   </div>
                 </div>
               </motion.div>
             </div>
-
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-emerald-100 to-transparent rounded-full z-0 opacity-50 blur-3xl" />
           </motion.div>
         </div>
       </section>
 
+      {/* SERVICES + PANEL DE DETALLE */}
       <section className="py-14 sm:py-24 bg-slate-50 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-20">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 sm:mb-4">Tratamientos a tu Medida</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 sm:mb-4">
+              Tratamientos a tu Medida
+            </h2>
             <p className="text-slate-500 text-base sm:text-lg">
-              Diseñamos protocolos personalizados combinando las técnicas más avanzadas del mercado para asegurar resultados naturales y duraderos.
+              Protocolos personalizados combinando las técnicas más avanzadas para
+              resultados naturales y duraderos.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
             {services.map((service, idx) => (
-              <motion.div
+              <motion.button
                 key={idx}
                 whileHover={{ y: -8 }}
-                className={`p-5 sm:p-8 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border transition-all duration-300 cursor-pointer ${
+                onClick={() => setActiveService(idx)}
+                aria-pressed={activeService === idx}
+                className={`text-left p-5 sm:p-8 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border transition-all duration-300 ${
                   activeService === idx
                     ? "border-emerald-500 ring-4 ring-emerald-50"
                     : "border-transparent hover:border-emerald-200"
                 }`}
-                onClick={() => setActiveService(idx)}
               >
                 <div
                   className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors ${
-                    activeService === idx ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600"
+                    activeService === idx
+                      ? "bg-emerald-500 text-white"
+                      : "bg-slate-100 text-slate-600"
                   }`}
                 >
                   {service.icon}
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2 sm:mb-3">{service.title}</h3>
-                <p className="text-slate-500 mb-6 leading-relaxed">{service.desc}</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-800 mb-2 sm:mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-slate-500 mb-6 leading-relaxed">
+                  {service.desc}
+                </p>
 
                 <ul className="space-y-3">
                   {service.items.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                    <li
+                      key={i}
+                      className="flex items-center gap-3 text-sm text-slate-700 font-medium"
+                    >
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                       {item}
                     </li>
                   ))}
                 </ul>
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Panel de detalle del servicio activo */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="mt-8 sm:mt-12 grid lg:grid-cols-[1fr_auto] gap-4 sm:gap-6 items-center bg-white rounded-2xl p-5 sm:p-7 border border-emerald-100"
+            >
+              <div className="min-w-0">
+                <div className="text-[10px] uppercase tracking-widest text-emerald-600 font-bold mb-1">
+                  Detalle · {current.title}
+                </div>
+                <p className="text-slate-700 leading-relaxed">{current.detail}</p>
+                <p className="mt-2 text-xs text-slate-500">{current.duration}</p>
+              </div>
+              <a
+                href={reservar(`Quiero más info sobre ${current.title}.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-emerald-600 text-white px-5 py-3 rounded-full font-semibold hover:bg-emerald-700 transition inline-flex items-center gap-2 whitespace-nowrap"
+              >
+                Consultar
+                <ArrowRight size={16} />
+              </a>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* EQUIPO */}
+      <section id="equipo" className="py-14 sm:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest mb-4">
+              <Award size={14} />
+              Equipo profesional
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+              Profesionales habilitados, no operarios.
+            </h2>
+            <p className="text-slate-500 text-base sm:text-lg">
+              Cada tratamiento es supervisado por nuestro equipo médico. Conocelos
+              antes de tu primera consulta.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
+            {team.map((p, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ delay: i * 0.1 }}
+                className="rounded-2xl border border-slate-100 overflow-hidden bg-white shadow-sm"
+              >
+                <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
+                  <img
+                    src={p.img}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <div className="text-[10px] uppercase tracking-widest text-emerald-600 font-bold">
+                    {p.role}
+                  </div>
+                  <div className="text-lg font-bold text-slate-900 mt-1">
+                    {p.name}
+                  </div>
+                  <div className="text-sm text-slate-500 mt-0.5">{p.spec}</div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* TESTIMONIOS */}
       <section className="py-14 sm:py-24 bg-emerald-900 text-white relative">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">Voces de Nuestra Comunidad</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+              Voces de nuestra comunidad
+            </h2>
             <div className="w-16 h-1 bg-emerald-500 mx-auto rounded-full" />
           </div>
 
@@ -220,12 +379,17 @@ export const HealthView = () => {
                     <Star key={s} size={16} fill="currentColor" />
                   ))}
                 </div>
-                <p className="text-base sm:text-lg text-emerald-100 italic mb-4 sm:mb-6">"’{t.text}’"</p>
+                {/* Comillas españolas, no mezcladas */}
+                <p className="text-base sm:text-lg text-emerald-100 italic mb-4 sm:mb-6">
+                  «{t.text}»
+                </p>
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-300" />
                   <div>
                     <div className="font-bold text-white">{t.name}</div>
-                    <div className="text-xs text-emerald-300 uppercase tracking-wide">{t.role}</div>
+                    <div className="text-xs text-emerald-300 uppercase tracking-wide">
+                      {t.role}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -234,18 +398,47 @@ export const HealthView = () => {
         </div>
       </section>
 
-      <footer className="bg-slate-50 py-8 sm:py-12 border-t border-slate-200">
-        <div className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6 opacity-60">
+      <footer className="bg-slate-50 py-10 sm:py-14 border-t border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
           <div className="flex items-center gap-2 font-bold text-slate-900">
             <Gem className="text-emerald-600" size={20} />
             <span>Lumina Health</span>
           </div>
-          <div className="text-sm text-slate-500">&copy; 2026 Lumina Estética Integral.</div>
-          <div className="flex gap-4">
-            <Instagram size={20} className="hover:text-emerald-600 cursor-pointer transition-colors" />
-            <Facebook size={20} className="hover:text-emerald-600 cursor-pointer transition-colors" />
-            <MessageCircle size={20} className="hover:text-emerald-600 cursor-pointer transition-colors" />
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            <ShieldCheck size={14} />
+            Habilitación · Dirección médica responsable · Privacidad de datos
           </div>
+          <div className="flex gap-4">
+            <a href="#" aria-label="Instagram">
+              <Instagram
+                size={20}
+                className="hover:text-emerald-600 cursor-pointer transition-colors"
+              />
+            </a>
+            <a href="#" aria-label="Facebook">
+              <Facebook
+                size={20}
+                className="hover:text-emerald-600 cursor-pointer transition-colors"
+              />
+            </a>
+            <a
+              href={reservar("Hola! Quiero info por WhatsApp.")}
+              aria-label="WhatsApp"
+            >
+              <MessageCircle
+                size={20}
+                className="hover:text-emerald-600 cursor-pointer transition-colors"
+              />
+            </a>
+          </div>
+        </div>
+        <div className="mt-6 text-center">
+          <button
+            onClick={onBackToStudio}
+            className="text-xs uppercase tracking-widest text-slate-500 hover:text-emerald-600 transition-colors"
+          >
+            ← Volver al estudio Nexo
+          </button>
         </div>
       </footer>
     </motion.div>
