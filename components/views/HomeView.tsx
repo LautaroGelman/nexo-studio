@@ -267,8 +267,8 @@ export const HomeView = ({
         >
           {/* ── HERO ── */}
           <section className="relative overflow-hidden">
-            {/* Capa de partículas (full-bleed dentro del hero) */}
-            <div className="absolute inset-0 z-0">
+            {/* Capa de partículas (full-bleed dentro del hero, solo escritorio) */}
+            <div className="absolute inset-0 z-0 hidden md:block">
               <Particles density={80} color="rgba(15,15,15,0.55)" linkDistance={140} />
             </div>
             {/* Grid sutil sobre las partículas */}
@@ -276,7 +276,7 @@ export const HomeView = ({
             {/* Fade superior para ayudar la lectura del headline */}
             <div className="absolute inset-x-0 top-0 z-0 h-[60%] bg-gradient-to-b from-white via-white/85 to-transparent" />
 
-            <div className="container mx-auto px-4 sm:px-6 pt-6 pb-12 sm:pt-10 sm:pb-16 md:pt-16 md:pb-20">
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 pt-6 pb-12 sm:pt-10 sm:pb-16 md:pt-16 md:pb-20">
               <div className="max-w-5xl mx-auto text-center">
                 <motion.div
                   initial={{ opacity: 0, y: 14 }}
@@ -712,7 +712,7 @@ export const HomeView = ({
               transition={{ duration: 0.6 }}
               className="rounded-2xl sm:rounded-[2.5rem] bg-black text-white p-5 sm:p-8 md:p-12 overflow-hidden relative"
             >
-              <div className="absolute inset-0 z-0 opacity-50">
+              <div className="absolute inset-0 z-0 opacity-50 hidden md:block">
                 <Particles density={50} color="rgba(255,255,255,0.55)" linkDistance={140} />
               </div>
               <div className="absolute -top-40 -right-40 z-0 w-[520px] h-[520px] rounded-full bg-white/10 blur-[80px]" />
