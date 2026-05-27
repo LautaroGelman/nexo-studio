@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -25,7 +25,72 @@ import { STYLE_CARDS, whatsappLink } from "../constants";
 import Particles from "../ui/Particles";
 
 /* ─────────────────────────────────────────────────────────────────
-   Stacked card del showcase 3D
+   Hooks
+   ──────────────────────────────────────────────────────────────── */
+function useIsMobile(breakpoint = "(max-width: 1023px)") {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia(breakpoint);
+    setMatches(m.matches);
+    const listener = (e: MediaQueryListEvent) => setMatches(e.matches);
+    m.addEventListener("change", listener);
+    return () => m.removeEventListener("change", listener);
+  }, [breakpoint]);
+  return matches;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   CardBody — contenido visual reutilizable
+   ──────────────────────────────────────────────────────────────── */
+const CardBody = ({ card }: { card: StyleCard }) => (
+  <>
+    <div className="relative h-48 sm:h-64">
+      <div className={`absolute inset-0 bg-gradient-to-br ${card.accent}`} />
+      <img
+        src={card.image}
+        alt=""
+        loading="eager"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover opacity-70"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="absolute left-5 bottom-5 right-5">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/30 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm">
+          {card.icon}
+          {card.title}
+        </div>
+        <div className="mt-3 text-lg md:text-xl font-extrabold text-white leading-tight">
+          {card.subtitle}
+        </div>
+      </div>
+    </div>
+    <div className="p-5 sm:p-6 bg-black/90 backdrop-blur-xl relative z-10">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {card.bullets.map((b, idx) => (
+          <div
+            key={idx}
+            className="rounded-xl bg-white/10 border border-white/5 px-3 py-2 text-[10px] sm:text-xs font-semibold text-white/90 text-center"
+          >
+            {b}
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
+        <div className="text-xs font-medium text-white/50">Abrir demo</div>
+        <div className="inline-flex items-center gap-2 text-sm font-bold text-white group">
+          Ver demo
+          <ArrowRight
+            size={16}
+            className="text-white/70 group-hover:translate-x-1 transition-transform"
+          />
+        </div>
+      </div>
+    </div>
+  </>
+);
+
+/* ─────────────────────────────────────────────────────────────────
+   Stacked card del showcase 3D (desktop)
    ──────────────────────────────────────────────────────────────── */
 const StackedCard = ({
   card,
@@ -72,46 +137,7 @@ const StackedCard = ({
       className="absolute origin-top w-full max-w-[320px] sm:max-w-md text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] transition-shadow"
       aria-label={`Ver demo ${card.title}`}
     >
-      <div className="relative h-48 sm:h-64">
-        <div className={`absolute inset-0 bg-gradient-to-br ${card.accent}`} />
-        <img
-          src={card.image}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-70"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute left-5 bottom-5 right-5">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/20 border border-white/30 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md shadow-sm">
-            {card.icon}
-            {card.title}
-          </div>
-          <div className="mt-3 text-lg md:text-xl font-extrabold text-white leading-tight">
-            {card.subtitle}
-          </div>
-        </div>
-      </div>
-      <div className="p-5 sm:p-6 bg-black/90 backdrop-blur-xl relative z-10">
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          {card.bullets.map((b, idx) => (
-            <div
-              key={idx}
-              className="rounded-xl bg-white/10 border border-white/5 px-3 py-2 text-[10px] sm:text-xs font-semibold text-white/90 text-center"
-            >
-              {b}
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-          <div className="text-xs font-medium text-white/50">Abrir demo</div>
-          <div className="inline-flex items-center gap-2 text-sm font-bold text-white group">
-            Ver demo
-            <ArrowRight
-              size={16}
-              className="text-white/70 group-hover:translate-x-1 transition-transform"
-            />
-          </div>
-        </div>
-      </div>
+      <CardBody card={card} />
     </motion.button>
   );
 };
@@ -206,6 +232,7 @@ export const HomeView = ({
   onNavigate: (view: ViewType) => void;
 }) => {
   const reduced = useReducedMotion();
+  const isMobile = useIsMobile();
   const { scrollY } = useScroll();
   // Reveal rápido: el texto se desvanece/desnubla entre 0 y 120px de scroll.
   const convertOpacity = useTransform(scrollY, [0, 120], reduced ? [1, 1] : [0.25, 1]);
@@ -384,53 +411,107 @@ export const HomeView = ({
             </div>
           </section>
 
-          {/* ── SHOWCASE 3D ── */}
-          <section
-            id="showcase-section"
-            ref={showcaseRef}
-            className="relative h-[400vh] w-full bg-slate-50 border-y border-gray-200/50"
-          >
-            <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden px-4 sm:px-6">
-              <div className="container mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
-                <div className="w-full lg:w-5/12 flex flex-col z-10">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    className="inline-flex items-center w-fit gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 shadow-sm"
-                  >
-                    <LayoutTemplate size={14} />
-                    Showcase interactivo
-                  </motion.div>
-                  <h2 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
-                    Algunos ejemplos de lo que podemos hacer.
-                  </h2>
-                  <p className="mt-6 text-gray-600 text-lg sm:text-xl leading-relaxed max-w-lg">
-                    Son <b>demos</b> — no plantillas. A cada cliente le diseñamos una
-                    solución a medida, pensada como un ecosistema premium para
-                    convertir visitas en clientes.
-                  </p>
-                  <div className="mt-6 inline-flex items-center gap-2 text-xs text-gray-500 self-start">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    5 estilos · navegá cada uno desde el menú "Demos"
+          {/* ── SHOWCASE ── */}
+          {isMobile ? (
+            <section
+              id="showcase-section"
+              className="relative py-10 sm:py-16 bg-slate-50 border-y border-gray-200/50"
+            >
+              <div className="container mx-auto px-4 sm:px-6">
+                <div className="flex flex-col gap-8">
+                  <div className="flex flex-col z-10">
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      className="inline-flex items-center w-fit gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 shadow-sm"
+                    >
+                      <LayoutTemplate size={14} />
+                      Showcase interactivo
+                    </motion.div>
+                    <h2 className="mt-5 text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
+                      Algunos ejemplos de lo que podemos hacer.
+                    </h2>
+                    <p className="mt-6 text-gray-600 text-lg sm:text-xl leading-relaxed max-w-lg">
+                      Son <b>demos</b> — no plantillas. A cada cliente le diseñamos una
+                      solución a medida, pensada como un ecosistema premium para
+                      convertir visitas en clientes.
+                    </p>
+                    <div className="mt-6 inline-flex items-center gap-2 text-xs text-gray-500 self-start">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      5 estilos · deslizá para ver cada uno
+                    </div>
+                  </div>
+
+                  <div className="w-full">
+                    <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 no-scrollbar">
+                      {STYLE_CARDS.map((card) => (
+                        <motion.button
+                          key={card.id}
+                          onClick={() => onNavigate(card.id)}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.4 }}
+                          className="snap-center shrink-0 w-[85vw] sm:w-[70vw] max-w-sm text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-lg active:scale-[0.98] transition-transform"
+                          aria-label={`Ver demo ${card.title}`}
+                        >
+                          <CardBody card={card} />
+                        </motion.button>
+                      ))}
+                    </div>
                   </div>
                 </div>
+              </div>
+            </section>
+          ) : (
+            <section
+              id="showcase-section"
+              ref={showcaseRef}
+              className="relative h-[400vh] w-full bg-slate-50 border-y border-gray-200/50"
+            >
+              <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden px-4 sm:px-6">
+                <div className="container mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
+                  <div className="w-full lg:w-5/12 flex flex-col z-10">
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      className="inline-flex items-center w-fit gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 shadow-sm"
+                    >
+                      <LayoutTemplate size={14} />
+                      Showcase interactivo
+                    </motion.div>
+                    <h2 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
+                      Algunos ejemplos de lo que podemos hacer.
+                    </h2>
+                    <p className="mt-6 text-gray-600 text-lg sm:text-xl leading-relaxed max-w-lg">
+                      Son <b>demos</b> — no plantillas. A cada cliente le diseñamos una
+                      solución a medida, pensada como un ecosistema premium para
+                      convertir visitas en clientes.
+                    </p>
+                    <div className="mt-6 inline-flex items-center gap-2 text-xs text-gray-500 self-start">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      5 estilos · navegá cada uno desde el menú "Demos"
+                    </div>
+                  </div>
 
-                <div className="w-full lg:w-1/2 relative h-[55vh] sm:h-[65vh] flex items-center justify-center perspective-[1200px]">
-                  {STYLE_CARDS.map((card, i) => (
-                    <StackedCard
-                      key={card.id}
-                      card={card}
-                      i={i}
-                      total={STYLE_CARDS.length}
-                      progress={showcaseProgress}
-                      onNavigate={onNavigate}
-                    />
-                  ))}
+                  <div className="w-full lg:w-1/2 relative h-[55vh] sm:h-[65vh] flex items-center justify-center perspective-[1200px]">
+                    {STYLE_CARDS.map((card, i) => (
+                      <StackedCard
+                        key={card.id}
+                        card={card}
+                        i={i}
+                        total={STYLE_CARDS.length}
+                        progress={showcaseProgress}
+                        onNavigate={onNavigate}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* ── PROCESO (sin precios) ── */}
           <section className="container mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-20">
