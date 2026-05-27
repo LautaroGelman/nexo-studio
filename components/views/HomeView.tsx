@@ -268,13 +268,13 @@ export const HomeView = ({
           {/* ── HERO ── */}
           <section className="relative overflow-hidden">
             {/* Capa de partículas (full-bleed dentro del hero) */}
-            <div className="absolute inset-0 -z-10">
+            <div className="absolute inset-0 z-0">
               <Particles density={80} color="rgba(15,15,15,0.55)" linkDistance={140} />
             </div>
             {/* Grid sutil sobre las partículas */}
-            <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
+            <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
             {/* Fade superior para ayudar la lectura del headline */}
-            <div className="absolute inset-x-0 top-0 -z-10 h-[60%] bg-gradient-to-b from-white via-white/85 to-transparent" />
+            <div className="absolute inset-x-0 top-0 z-0 h-[60%] bg-gradient-to-b from-white via-white/85 to-transparent" />
 
             <div className="container mx-auto px-4 sm:px-6 pt-6 pb-12 sm:pt-10 sm:pb-16 md:pt-16 md:pb-20">
               <div className="max-w-5xl mx-auto text-center">
@@ -441,10 +441,42 @@ export const HomeView = ({
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       5 estilos · deslizá para ver cada uno
                     </div>
+
+                    {/* Indicador de scroll horizontal — fondo negro, agresivo */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3, duration: 0.5 }}
+                      className="mt-6 self-center w-full max-w-lg"
+                    >
+                      <div className="flex items-center justify-between gap-4 w-full rounded-full bg-black border border-white/10 px-5 py-3 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
+                        <motion.div
+                          animate={{ x: [-4, 18, -4] }}
+                          transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                          <Hand size={20} className="text-white" />
+                        </motion.div>
+                        <div className="leading-tight flex-1 text-center">
+                          <div className="text-[10px] uppercase tracking-[0.25em] font-bold text-white/60">
+                            Acción
+                          </div>
+                          <div className="text-base font-semibold text-white">
+                            Deslizá para explorar y elegir
+                          </div>
+                        </div>
+                        <motion.div
+                          animate={{ x: [0, 10, 0], opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
+                        >
+                          <ArrowRight size={18} className="text-white" />
+                        </motion.div>
+                      </div>
+                    </motion.div>
                   </div>
 
                   <div className="w-full">
-                    <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 no-scrollbar">
+                    <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-6 -mx-4 px-3 sm:-mx-6 sm:px-4 no-scrollbar">
                       {STYLE_CARDS.map((card) => (
                         <motion.button
                           key={card.id}
@@ -453,7 +485,7 @@ export const HomeView = ({
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true, amount: 0.3 }}
                           transition={{ duration: 0.4 }}
-                          className="snap-center shrink-0 w-[85vw] sm:w-[70vw] max-w-sm text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-lg active:scale-[0.98] transition-transform"
+                          className="snap-center shrink-0 w-[72vw] sm:w-[60vw] md:w-[45vw] max-w-sm text-left rounded-[2rem] border border-gray-200/60 overflow-hidden bg-white shadow-lg active:scale-[0.98] transition-transform"
                           aria-label={`Ver demo ${card.title}`}
                         >
                           <CardBody card={card} />
@@ -680,11 +712,11 @@ export const HomeView = ({
               transition={{ duration: 0.6 }}
               className="rounded-2xl sm:rounded-[2.5rem] bg-black text-white p-5 sm:p-8 md:p-12 overflow-hidden relative"
             >
-              <div className="absolute inset-0 -z-0 opacity-50">
+              <div className="absolute inset-0 z-0 opacity-50">
                 <Particles density={50} color="rgba(255,255,255,0.55)" linkDistance={140} />
               </div>
-              <div className="absolute -top-40 -right-40 w-[520px] h-[520px] rounded-full bg-white/10 blur-[80px]" />
-              <div className="absolute -bottom-48 -left-48 w-[520px] h-[520px] rounded-full bg-white/10 blur-[90px]" />
+              <div className="absolute -top-40 -right-40 z-0 w-[520px] h-[520px] rounded-full bg-white/10 blur-[80px]" />
+              <div className="absolute -bottom-48 -left-48 z-0 w-[520px] h-[520px] rounded-full bg-white/10 blur-[90px]" />
 
               <div className="relative z-10 grid md:grid-cols-2 gap-10 items-start">
                 <div>
